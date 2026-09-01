@@ -1,15 +1,31 @@
 import '../../domain/models/recipe/recipe.dart';
 import '../services/local/recipe_local_service.dart';
-
+import '../../utils/result.dart';
 class RecipeRepository {
-    RecipeRepository({required this._recipeLocalDatabase});
+    RecipeRepository({required this._database});
 
-    final RecipeLocalService _recipeLocalDatabase;
+    final DatabaseService _database;
 
-    Future<List<Recipe>> fetchRecipes() async {
-        if (!_recipeLocalDatabase.isOpen()) {
-            await _recipeLocalDatabase.open();
+    Future<Result<List<Recipe>>> fetchRecipes() async {
+        if (!_database.isOpen()) {
+            await _database.open();
         }
-        return _recipeLocalDatabase.getAll();
+        return _database.getAll();
+    }
+
+    Future<Result<Recipe>> createRecipe(String recipe) async {
+        if (!_database.isOpen()) {
+            await _database.open();
+        }
+        return _database.insert(recipe);
+    }
+
+    Future<void> seedRecipes(List recipes) async {
+        if (!_database.isOpen()) {
+            await _database.open();
+        }
+        for (Recipe recipe in recipes) {
+            await _database.insert(recipe.name);
+        }
     }
 }

@@ -2,14 +2,16 @@ import 'package:path/path.dart';
 import 'package:recipe_app/domain/models/recipe/recipe.dart';
 import 'package:sqflite/sqflite.dart';
 
-class RecipeLocalService {
+import '../../../utils/result.dart';
+
+class DatabaseService {
   // #docregion Table
   static const String _recipeTableName = 'recipes';
   static const String _idColumnName = '_id';
   static const String _recipeColumnName ='_recipe';
   // #endregion Table
 
-  RecipeLocalService({required this.databaseFactory});
+  DatabaseService({required this.databaseFactory});
 
   final DatabaseFactory databaseFactory;
 
@@ -34,19 +36,20 @@ class RecipeLocalService {
   // #enddocregion Open
 
   // #docregion Insert
-  Future<void> insert(String recipe) async {
+  Future<Result<Recipe>> insert(String recipe) async {
     try {
       final id = await _database!.insert(_recipeTableName, {
         _recipeColumnName: recipe
       });
+      return Result.ok(Recipe(id: id, name: recipe));
     } on Exception catch (e) {
-      print('Error inserting');
+      return Result.error(e);
     }
   }
   // #enddocregion Insert
 
   // #docregion GetAll
-  Future<List<Recipe>> getAll() async {
+  Future<Result<List<Recipe>>> getAll() async {
     try {
       final entries = await _database!.query(
         _recipeTableName, columns: [_idColumnName, _recipeColumnName],
@@ -59,10 +62,10 @@ class RecipeLocalService {
           ),
         )
         .toList();
-      return list;
+      return Result.ok(list);
     } on Exception catch (e) {
       print("Error getAll()");
-      return [];
+      return Result.error(e);
     }
   }
 }
