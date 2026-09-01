@@ -1,11 +1,12 @@
 class Recipe {
-  Recipe({required this.name});
+  Recipe({required this.id, required this.name});
 
-  final String name;  
+  final int id;  
+  final String name;
 }
 
-final egg = Recipe(name: 'Egg');
-final rice = Recipe(name: 'Rice');
+final egg = Recipe(id: 1, name: 'Egg');
+final rice = Recipe(id: 2, name: 'Rice');
 
 final Set<Recipe> allRecipes = {
   egg,
