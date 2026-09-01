@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'routing/router.dart';
 
+import 'package:provider/provider.dart';
+import 'ui/recipes/view_models/recipe_viewmodel.dart';
+
 void main() {
-  runApp(const MainApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => RecipeViewModel())
+      ],
+      child: const MainApp()
+    )
+  );
 }
 
 class MainApp extends StatelessWidget {
