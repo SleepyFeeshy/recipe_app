@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import '../../recipes/widgets/recipe_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
