@@ -14,6 +14,10 @@ import 'data/services/local/database_service.dart';
 
 import 'domain/models/recipe/recipe.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart'
+    as flutter_localizations;
+
+
 
 
 void main() {
@@ -63,6 +67,11 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Recipe Journal',
+      localizationsDelegates: flutter_localizations.GlobalMaterialLocalizations.delegates,
+      supportedLocales: [
+        Locale('en'), // English
+        // Locale('es'), // Spanish
+      ],
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
