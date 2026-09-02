@@ -1,5 +1,5 @@
 import '../../domain/models/recipe/recipe.dart';
-import '../services/local/recipe_local_service.dart';
+import '../services/local/database_service.dart';
 import '../../utils/result.dart';
 class RecipeRepository {
     RecipeRepository({required this._database});
