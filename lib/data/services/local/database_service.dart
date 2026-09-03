@@ -26,7 +26,11 @@ class DatabaseService {
       options: OpenDatabaseOptions(
         onCreate: (db, version) {
           return db.execute(
-            'CREATE TABLE $_recipeTableName($_idColumnName INTEGER PRIMARY KEY AUTOINCREMENT, $_recipeColumnName TEXT)',
+            '''
+            CREATE TABLE $_recipeTableName(
+              $_idColumnName INTEGER PRIMARY KEY AUTOINCREMENT, 
+              $_recipeColumnName TEXT
+            )''',
           );
         },
         version: 1
@@ -64,7 +68,6 @@ class DatabaseService {
         .toList();
       return Result.ok(list);
     } on Exception catch (e) {
-      print("Error getAll()");
       return Result.error(e);
     }
   }
