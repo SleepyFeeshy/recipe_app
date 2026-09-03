@@ -6,7 +6,7 @@ import '../ui/recipes/widgets/recipes_screen.dart';
 import '../ui/core/layout/layout_scaffold.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/recipes',
+  initialLocation: '/',
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => LayoutScaffold(

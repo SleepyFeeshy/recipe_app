@@ -1,4 +1,6 @@
 // import '../model/recipe.dart';
+import 'dart:io';
+
 import 'package:recipe_app/data/model/recipe.dart';
 
 import '../../domain/models/recipe/recipe.dart';
@@ -9,9 +11,9 @@ class RecipeRepository {
 
     final DatabaseService _database;
 
-    Future<List<Recipe>> fetchRecipes() async {
+    Future<Result<List<Recipe>>> fetchRecipes() async {
       final Result<List<RecipeEntity>> result;
-      List<Recipe> recipes = [];
+      final List<Recipe> recipes;
       if (!_database.isOpen()) {
           await _database.open();
       }
@@ -26,11 +28,10 @@ class RecipeRepository {
               );
             }
           ).toList();
-          return recipes;
+          return Result.ok(recipes);
         case Error():
-          print("error");
+          return Result.error(result.error);
       }
-      return [];
     }
 
     Future<Result<RecipeEntity>> createRecipe(String recipe) async {

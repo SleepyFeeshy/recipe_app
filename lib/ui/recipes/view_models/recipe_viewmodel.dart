@@ -30,22 +30,19 @@ class RecipeViewModel extends ChangeNotifier {
   List<Recipe> get recipes => _recipes;
 
   Future<Result<void>> _load() async {
-    final result = await _recipeRepository.fetchRecipes();
-    _recipes = result;
-    return Result.ok(null);
-    // try {
-    //   final result = await _recipeRepository.fetchRecipes();
-    //   switch (result) {
-    //     case Ok<List<Recipe>>():
-    //       _recipes = result.value;
-    //       return Result.ok(null);
-    //     case Error():
-    //       return Result.error(result.error);
-    //   }
-    // } on Exception catch (e) {
-    //   return Result.error(e);
-    // } finally {
-    //   notifyListeners();
-    // }
+    try {
+      final result = await _recipeRepository.fetchRecipes();
+      switch (result) {
+        case Ok<List<Recipe>>():
+          _recipes = result.value;
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    } finally {
+      notifyListeners();
+    }
   }
 }
