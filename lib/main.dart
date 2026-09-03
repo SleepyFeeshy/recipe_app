@@ -12,7 +12,7 @@ import 'ui/recipes/view_models/recipe_viewmodel.dart';
 import 'data/repositories/recipe_repository.dart';
 import 'data/services/local/database_service.dart';
 
-import 'domain/models/recipe/recipe.dart';
+import 'data/model/recipe.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart'
     as flutter_localizations;

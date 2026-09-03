@@ -8,6 +8,8 @@ import '../../../data/repositories/recipe_repository.dart';
 import '../../../utils/command.dart';
 import '../../../utils/result.dart';
 
+import '../../../domain/models/recipe/recipe.dart';
+
 List<Recipe> generateSeedData() {
   return allRecipes.toList();
 }
@@ -28,19 +30,22 @@ class RecipeViewModel extends ChangeNotifier {
   List<Recipe> get recipes => _recipes;
 
   Future<Result<void>> _load() async {
-    try {
-      final result = await _recipeRepository.fetchRecipes();
-      switch (result) {
-        case Ok<List<Recipe>>():
-          _recipes = result.value;
-          return Result.ok(null);
-        case Error():
-          return Result.error(result.error);
-      }
-    } on Exception catch (e) {
-      return Result.error(e);
-    } finally {
-      notifyListeners();
-    }
+    final result = await _recipeRepository.fetchRecipes();
+    _recipes = result;
+    return Result.ok(null);
+    // try {
+    //   final result = await _recipeRepository.fetchRecipes();
+    //   switch (result) {
+    //     case Ok<List<Recipe>>():
+    //       _recipes = result.value;
+    //       return Result.ok(null);
+    //     case Error():
+    //       return Result.error(result.error);
+    //   }
+    // } on Exception catch (e) {
+    //   return Result.error(e);
+    // } finally {
+    //   notifyListeners();
+    // }
   }
 }

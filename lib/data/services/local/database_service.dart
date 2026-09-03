@@ -5,11 +5,17 @@ import 'package:sqflite/sqflite.dart';
 import '../../../utils/result.dart';
 
 class DatabaseService {
-  // #docregion Table
+  // #docregion Recipes Table
   static const String _recipeTableName = 'recipes';
-  static const String _idColumnName = '_id';
+  static const String _recipeIdColumnName = '_id';
   static const String _recipeColumnName ='_recipe';
-  // #endregion Table
+  // #endregion Recipes Table
+
+  // #docregion Ingredients Table
+  static const String _ingredientTableName = 'ingredients';
+  static const String _ingredientIdColumnName = '_id';
+  static const String _ingredientColumnName ='_ingredient';
+  // #endregion Ingredients Table
 
   DatabaseService({required this.databaseFactory});
 
@@ -28,7 +34,7 @@ class DatabaseService {
           return db.execute(
             '''
             CREATE TABLE $_recipeTableName(
-              $_idColumnName INTEGER PRIMARY KEY AUTOINCREMENT, 
+              $_recipeIdColumnName INTEGER PRIMARY KEY AUTOINCREMENT, 
               $_recipeColumnName TEXT
             )''',
           );
@@ -40,12 +46,12 @@ class DatabaseService {
   // #enddocregion Open
 
   // #docregion Insert
-  Future<Result<Recipe>> insert(String recipe) async {
+  Future<Result<RecipeEntity>> insert(String recipe) async {
     try {
       final id = await _database!.insert(_recipeTableName, {
         _recipeColumnName: recipe
       });
-      return Result.ok(Recipe(id: id, name: recipe));
+      return Result.ok(RecipeEntity(id: id, name: recipe));
     } on Exception catch (e) {
       return Result.error(e);
     }
@@ -53,15 +59,15 @@ class DatabaseService {
   // #enddocregion Insert
 
   // #docregion GetAll
-  Future<Result<List<Recipe>>> getAll() async {
+  Future<Result<List<RecipeEntity>>> getAll() async {
     try {
       final entries = await _database!.query(
-        _recipeTableName, columns: [_idColumnName, _recipeColumnName],
+        _recipeTableName, columns: [_recipeIdColumnName, _recipeColumnName],
       );
       final list = entries
         .map(
-          (element) => Recipe(
-            id: element[_idColumnName] as int,
+          (element) => RecipeEntity(
+            id: element[_recipeIdColumnName] as int,
             name: element[_recipeColumnName] as String,
           ),
         )

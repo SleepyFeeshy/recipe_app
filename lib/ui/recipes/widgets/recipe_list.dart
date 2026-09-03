@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../view_models/recipe_viewmodel.dart';
 
 import 'package:provider/provider.dart';
+import '../../../data/model/recipe.dart';
 import '../../../domain/models/recipe/recipe.dart';
 
 class RecipesList extends StatelessWidget {
