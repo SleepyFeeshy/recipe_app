@@ -13,14 +13,14 @@ final GoRouter router = GoRouter(
         navigationShell: navigationShell,
       ),
       branches: [
-        // StatefulShellBranch(
-        //   routes: [
-        //     GoRoute(
-        //       path: '/',
-        //       builder: (BuildContext context, GoRouterState state) => HomeScreen()
-        //     )
-        //   ]
-        // ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (BuildContext context, GoRouterState state) => RecipesScreen()
+            )
+          ]
+        ),
         StatefulShellBranch(
           routes: [
             GoRoute(

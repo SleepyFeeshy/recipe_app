@@ -1,5 +1,5 @@
 import 'package:path/path.dart';
-import 'package:recipe_app/domain/models/recipe/recipe.dart';
+import 'package:recipe_app/data/model/recipe.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../utils/result.dart';

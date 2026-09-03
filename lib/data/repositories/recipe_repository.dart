@@ -1,4 +1,4 @@
-import '../../domain/models/recipe/recipe.dart';
+import '../model/recipe.dart';
 import '../services/local/database_service.dart';
 import '../../utils/result.dart';
 class RecipeRepository {

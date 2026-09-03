@@ -1,3 +1,5 @@
+import 'ingredient.dart';
+
 class Recipe {
   Recipe({required this.id, required this.name});
 
