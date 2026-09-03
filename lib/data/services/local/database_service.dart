@@ -1,8 +1,10 @@
 import 'package:path/path.dart';
 import 'package:recipe_app/data/model/recipe.dart';
 import 'package:sqflite/sqflite.dart';
-
+import 'package:uuid/uuid.dart';
 import '../../../utils/result.dart';
+
+var uuid = Uuid();
 
 class DatabaseService {
   // #docregion Recipes Table
@@ -15,6 +17,16 @@ class DatabaseService {
   static const String _ingredientTableName = 'ingredients';
   static const String _ingredientIdColumnName = '_id';
   static const String _ingredientColumnName ='_ingredient';
+  // #endregion Ingredients Table
+
+  // #docregion Recipe Ingredients Table
+  static const String _recipeIngredientTableName = 'recipe_ingredients';
+  static const String _recipeIngredientIdColumnName = '_id';
+  static const String _recipeIngredientColumnName ='_recipe_ingredient';
+  static const String _recipeFkIdColumnName = '_recipe_id';
+  static const String _ingredientFkIdColumnName = '_ingredient_id';
+  static const String _quantity = '_ingredient_id';
+  static const String _unit = '_ingredient_id';
   // #endregion Ingredients Table
 
   DatabaseService({required this.databaseFactory});
@@ -30,14 +42,27 @@ class DatabaseService {
     _database = await databaseFactory.openDatabase(
       join(await databaseFactory.getDatabasesPath(), 'recipe_journal.db'),
       options: OpenDatabaseOptions(
-        onCreate: (db, version) {
-          return db.execute(
-            '''
-            CREATE TABLE $_recipeTableName(
-              $_recipeIdColumnName INTEGER PRIMARY KEY AUTOINCREMENT, 
+        onCreate: (db, version) async {
+          var batch = db.batch();
+          batch.execute('''CREATE TABLE $_recipeTableName(
+              $_recipeIdColumnName TEXT PRIMARY KEY, 
               $_recipeColumnName TEXT
-            )''',
-          );
+            )''');
+
+          batch.execute('''CREATE TABLE $_ingredientTableName(
+            $_ingredientIdColumnName TEXT PRIMARY KEY,
+            $_ingredientColumnName TEXT
+          )''');
+
+          batch.execute('''CREATE TABLE $_recipeIngredientTableName(
+            $_recipeIngredientIdColumnName TEXT PRIMARY KEY,
+            $_recipeIngredientColumnName TEXT,
+            $_recipeFkIdColumnName TEXT,
+            $_ingredientFkIdColumnName TEXT,
+            FOREIGN KEY($_recipeFkIdColumnName) REFERENCES $_recipeTableName($_recipeIdColumnName),
+            FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName)
+          )''');
+          await batch.commit();          
         },
         version: 1
       ),
@@ -48,7 +73,9 @@ class DatabaseService {
   // #docregion Insert
   Future<Result<RecipeEntity>> insert(String recipe) async {
     try {
-      final id = await _database!.insert(_recipeTableName, {
+      final String id =  uuid.v4();
+      await _database!.insert(_recipeTableName, {
+        _ingredientIdColumnName: id,
         _recipeColumnName: recipe
       });
       return Result.ok(RecipeEntity(id: id, name: recipe));
@@ -67,7 +94,7 @@ class DatabaseService {
       final list = entries
         .map(
           (element) => RecipeEntity(
-            id: element[_recipeIdColumnName] as int,
+            id: element[_recipeIdColumnName] as String,
             name: element[_recipeColumnName] as String,
           ),
         )

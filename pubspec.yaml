@@ -42,7 +42,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
-
+  uuid: ^4.6.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
