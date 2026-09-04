@@ -1,5 +1,8 @@
 import 'package:path/path.dart';
+import 'package:recipe_app/data/model/ingredient.dart';
 import 'package:recipe_app/data/model/recipe.dart';
+import 'package:recipe_app/data/model/recipe_ingredient.dart';
+import 'package:recipe_app/domain/models/recipe_ingredient/recipe_ingredient.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import '../../../utils/result.dart';
@@ -37,7 +40,7 @@ class DatabaseService {
 
   bool isOpen() => _database != null;
 
-  // #docregion Open
+  // #docregion Open Database
   Future<void> open() async {
     _database = await databaseFactory.openDatabase(
       join(await databaseFactory.getDatabasesPath(), 'recipe_journal.db'),
@@ -68,14 +71,14 @@ class DatabaseService {
       ),
     );
   }
-  // #enddocregion Open
+  // #enddocregion Open Database
 
-  // #docregion Insert
-  Future<Result<RecipeEntity>> insert(String recipe) async {
+  // #docregion Insert Recipe
+  Future<Result<RecipeEntity>> insertRecipe(String recipe) async {
     try {
       final String id =  uuid.v4();
       await _database!.insert(_recipeTableName, {
-        _ingredientIdColumnName: id,
+        _recipeIdColumnName: id,
         _recipeColumnName: recipe
       });
       return Result.ok(RecipeEntity(id: id, name: recipe));
@@ -83,10 +86,10 @@ class DatabaseService {
       return Result.error(e);
     }
   }
-  // #enddocregion Insert
+  // #enddocregion Insert Recipe
 
-  // #docregion GetAll
-  Future<Result<List<RecipeEntity>>> getAll() async {
+  // #docregion GetAll Recipes
+  Future<Result<List<RecipeEntity>>> getAllRecipes() async {
     try {
       final entries = await _database!.query(
         _recipeTableName, columns: [_recipeIdColumnName, _recipeColumnName],
@@ -104,4 +107,36 @@ class DatabaseService {
       return Result.error(e);
     }
   }
+  // #enddocregion GetAll Recipes
+
+  // #docregion Create Ingredient
+  Future<Result<IngredientEntity>> insertIngredient(String ingredient) async {
+    try {
+      final String id =  uuid.v4();
+      await _database!.insert(_ingredientTableName, {
+        _ingredientIdColumnName: id,
+        _ingredientColumnName: ingredient
+      });
+      return Result.ok(IngredientEntity(id: id, name: ingredient));
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Create Ingredient
+
+  // #docregion Create RecipeIngredient
+  Future<Result<RecipeIngredientEntity>> insertRecipeIngredient(String ingredientId, String recipeId) async {
+    try {
+      final String id =  uuid.v4();
+      await _database!.insert(_recipeIngredientTableName, {
+        _recipeIngredientIdColumnName: id,
+        _recipeFkIdColumnName: recipeId,
+        _ingredientFkIdColumnName: ingredientId
+      });
+      return Result.ok(RecipeIngredientEntity(id: id, ingredientId: ingredientId, recipeId: recipeId));
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Create Ingredient
 }

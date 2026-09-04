@@ -1,6 +1,6 @@
 class IngredientEntity {
   IngredientEntity({required this.id, required this.name});
 
-  final int id;  
+  final String id;  
   final String name;
 }
