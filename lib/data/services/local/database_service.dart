@@ -59,7 +59,6 @@ class DatabaseService {
 
           batch.execute('''CREATE TABLE $_recipeIngredientTableName(
             $_recipeIngredientIdColumnName TEXT PRIMARY KEY,
-            $_recipeIngredientColumnName TEXT,
             $_recipeFkIdColumnName TEXT,
             $_ingredientFkIdColumnName TEXT,
             FOREIGN KEY($_recipeFkIdColumnName) REFERENCES $_recipeTableName($_recipeIdColumnName),
@@ -139,4 +138,8 @@ class DatabaseService {
     }
   }
   // #enddocregion Create Ingredient
+
+  // #docregion Fetch Ingredients with Recipe ID
+  
+  // #enddocregion Fetch Ingredients with Recipe ID
 }

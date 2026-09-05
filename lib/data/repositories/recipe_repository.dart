@@ -25,6 +25,7 @@ class RecipeRepository {
       switch (result) {
         case Ok<List<RecipeEntity>>():
           recipes = result.value.map((recipeEntity) {
+              // Fetch ingredients of recipe
               return Recipe(
                 id: recipeEntity.id,
                 name: recipeEntity.name,

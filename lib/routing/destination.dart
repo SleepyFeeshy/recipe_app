@@ -11,6 +11,6 @@ const destinations = {
   // Destination(label: 'Home', icon: Icons.home),
   Destination(label: 'Recipes', icon: Icons.book),
   Destination(label: 'Ingredients', icon: Icons.list),
-  Destination(label: 'Grocery Lists', icon: Icons.shop),
-  Destination(label: 'Profile', icon: Icons.person)
+  // Destination(label: 'Grocery Lists', icon: Icons.shop),
+  // Destination(label: 'Profile', icon: Icons.person)
 };

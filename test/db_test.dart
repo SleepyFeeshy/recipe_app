@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:recipe_app/data/model/ingredient.dart';
 import 'package:recipe_app/data/model/recipe.dart';
+import 'package:recipe_app/data/repositories/recipe_ingredient_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -20,6 +21,7 @@ var uuid = Uuid();
 
 void main() async {
   late DatabaseService databaseService;
+  // close db if open
 
   // Chrome has no SQLite functionality, can't access local files
   if (kIsWeb) {
@@ -32,9 +34,14 @@ void main() async {
   } else {
     databaseService = DatabaseService(databaseFactory: databaseFactory);
   }
+
+  // String path = await getDatabasesPath() + 'recipe_journal.db';
+  // // Delete the database file completely
+  // await deleteDatabase(path);
   
   RecipeRepository recipeRepository = RecipeRepository(database: databaseService);
   IngredientRepository ingredientRepository = IngredientRepository(database: databaseService);
+  RecipeIngredientRepository recipeIngredientRepository = RecipeIngredientRepository(database: databaseService);
 
   // Delete tables
 
@@ -59,12 +66,12 @@ void main() async {
         print("Error");
     }
   }).toList());
-  
-  // Seed recipe ingredients
-  
 
-  
-  
+  // Seed recipe ingredients
+  await recipeIngredientRepository.createRecipeIngredient(eggAndRiceId!, eggId!);
+  await recipeIngredientRepository.createRecipeIngredient(eggAndRiceId!, riceId!);
+  await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, riceId!);
+  await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, steakId!);
 
   final recipes = await recipeRepository.fetchRecipes();
   print(await databaseFactoryFfi.getDatabasesPath()); // Get database path

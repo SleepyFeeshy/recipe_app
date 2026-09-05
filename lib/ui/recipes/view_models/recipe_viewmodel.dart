@@ -11,7 +11,7 @@ import '../../../utils/result.dart';
 import '../../../domain/models/recipe/recipe.dart';
 
 List<Recipe> generateSeedData() {
-  return allRecipes.toList();
+  return allSampleRecipes.toList();
 }
 
 // ViewModel of Recipe

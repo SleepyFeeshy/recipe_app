@@ -14,7 +14,7 @@ class RecipeIngredientRepository {
   final DatabaseService _database;
 
   // #docregion Ingredient CRUD
-  Future<Result<RecipeIngredient>> createRecipeIngredient(String ingredientId, String recipeId) async {
+  Future<Result<RecipeIngredient>> createRecipeIngredient(String recipeId, String ingredientId) async {
     final Result<RecipeIngredientEntity> result;
     final RecipeIngredient recipeIngredient;
       if (!_database.isOpen()) {
