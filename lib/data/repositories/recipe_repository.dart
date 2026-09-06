@@ -16,6 +16,8 @@ class RecipeRepository {
     // #docregion Recipe CRUD
     Future<Result<List<Recipe>>> fetchRecipes() async {
       final Result<List<RecipeEntity>> result;
+      final Result<List<IngredientEntity>> ingredients;
+
       final List<Recipe> recipes;
       if (!_database.isOpen()) {
           await _database.open();
@@ -26,6 +28,7 @@ class RecipeRepository {
         case Ok<List<RecipeEntity>>():
           recipes = result.value.map((recipeEntity) {
               // Fetch ingredients of recipe
+              // ingredients = await _database.fetchIngredientsWithRecipeId(recipeEntity.id);
               return Recipe(
                 id: recipeEntity.id,
                 name: recipeEntity.name,
