@@ -34,4 +34,29 @@ class RecipeIngredientRepository {
       }
   }
   // #enddocregion Ingredient CRUD
+
+  Future<Result<List<FullRecipeIngredient>>> fetchFullRecipeIngedientData(String recipeId, String ingredientId) async {
+    final Result<List<FullRecipeIngredientEntity>> result;
+    final FullRecipeIngredient recipeIngredient;
+    // final List<RecipeIngredient> = recipeIngredients;
+      if (!_database.isOpen()) {
+          await _database.open();
+      }
+      result = await _database.fetchFullRecipeData();
+      switch (result) {
+        case Ok<List<FullRecipeIngredientEntity>>():
+          var recipeIngredients = result.value.map((fullRecipeIngredientData) {
+            return FullRecipeIngredient(
+            id: fullRecipeIngredientData.id, 
+            ingredientId: fullRecipeIngredientData.ingredientId,
+            recipeId:   fullRecipeIngredientData.recipeId, 
+            recipeName: fullRecipeIngredientData.recipeName,
+            ingredientName: fullRecipeIngredientData.ingredientName);
+          }).toList();
+          return Result.ok(recipeIngredients);
+        case Error():
+          return Result.error(result.error);
+      }
+  }
+  // #enddocregion Ingredient CRUD
 }
