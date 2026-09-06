@@ -170,7 +170,7 @@ class DatabaseService {
     try {
       final entries = await _database!.rawQuery(
         '''
-          SELECT ri.$_recipeIngredientIdColumnName, r.$_recipeColumnName, i.$_ingredientColumnName, r.$_recipeIdColumnName, i.$_ingredientIdColumnName
+          SELECT ri.$_recipeIngredientIdColumnName, r.$_recipeColumnName, i.$_ingredientColumnName, r.$_recipeIdColumnName as recipeId, i.$_ingredientIdColumnName as ingredientId
           FROM $_recipeIngredientTableName as ri
           JOIN $_ingredientTableName as i
           ON ri._ingredient_id = i._id
@@ -181,9 +181,9 @@ class DatabaseService {
       final list = entries.map((element) {
         return FullRecipeIngredientEntity(
           id: element[_recipeIngredientIdColumnName] as String,
-          recipeId: element[_recipeIdColumnName] as String,
+          recipeId: element["recipeId"] as String,
           recipeName: element[_recipeColumnName] as String,
-          ingredientId: element[_ingredientIdColumnName] as String,
+          ingredientId: element["ingredientId"] as String,
           ingredientName: element[_ingredientColumnName] as String,
         );
       }).toList();

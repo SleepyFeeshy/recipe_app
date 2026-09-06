@@ -17,7 +17,7 @@ final GoRouter router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/',
+              path: '/recipes',
               builder: (BuildContext context, GoRouterState state) => RecipesScreen()
             )
           ]
@@ -25,7 +25,7 @@ final GoRouter router = GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: '/recipes',
+              path: '/ingredients',
               builder: (BuildContext context, GoRouterState state) => RecipesScreen(),
               // routes: [
               //   GoRoute(

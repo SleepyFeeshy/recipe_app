@@ -42,10 +42,9 @@ void main() async {
   RecipeRepository recipeRepository = RecipeRepository(database: databaseService);
   IngredientRepository ingredientRepository = IngredientRepository(database: databaseService);
   RecipeIngredientRepository recipeIngredientRepository = RecipeIngredientRepository(database: databaseService);
-
-  // Delete tables
-
-  // Seed ingredients
+  
+  void seedDatabase() async {
+    // Seed ingredients
   final [eggId, riceId, steakId] = await Future.wait(["Egg", "Rice", "Steak"].map((ingredientString) async{
     var ingredient = await ingredientRepository.createIngredient(ingredientString);
     switch (ingredient) {
@@ -72,7 +71,11 @@ void main() async {
   await recipeIngredientRepository.createRecipeIngredient(eggAndRiceId!, riceId!);
   await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, riceId!);
   await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, steakId!);
+  }
+
+  
 
   final recipes = await recipeRepository.fetchRecipes();
   print(await databaseFactoryFfi.getDatabasesPath()); // Get database path
 }
+

@@ -37,7 +37,7 @@ class RecipeIngredientRepository {
 
   Future<Result<List<FullRecipeIngredient>>> fetchFullRecipeIngedientData(String recipeId, String ingredientId) async {
     final Result<List<FullRecipeIngredientEntity>> result;
-    final FullRecipeIngredient recipeIngredient;
+
     // final List<RecipeIngredient> = recipeIngredients;
       if (!_database.isOpen()) {
           await _database.open();
@@ -45,15 +45,14 @@ class RecipeIngredientRepository {
       result = await _database.fetchFullRecipeData();
       switch (result) {
         case Ok<List<FullRecipeIngredientEntity>>():
-          var recipeIngredients = result.value.map((fullRecipeIngredientData) {
-            return FullRecipeIngredient(
-            id: fullRecipeIngredientData.id, 
-            ingredientId: fullRecipeIngredientData.ingredientId,
-            recipeId:   fullRecipeIngredientData.recipeId, 
-            recipeName: fullRecipeIngredientData.recipeName,
-            ingredientName: fullRecipeIngredientData.ingredientName);
-          }).toList();
-          return Result.ok(recipeIngredients);
+          var fullRecipeIngredients = result.value;
+          // Extract recipes
+          var recipes = fullRecipeIngredients.map((recipe) => recipe.recipeName).toSet();
+          print(recipes);
+          var returnData = recipes.map((recipeName) {
+
+          });
+          return Result.ok([]);
         case Error():
           return Result.error(result.error);
       }
