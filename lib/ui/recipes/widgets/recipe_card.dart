@@ -19,9 +19,8 @@ class RecipeCard extends StatelessWidget {
             );
           },
           splashColor: Colors.green.withAlpha(30),
-          child: SizedBox(
-            height: 60,
-            child: Text(recipe.name)
+          child: ListTile(
+            title: Text(recipe.name)
           )
         ,)
       )

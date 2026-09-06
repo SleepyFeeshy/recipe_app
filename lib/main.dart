@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe_app/data/repositories/ingredient_repository.dart';
+import 'package:recipe_app/ui/ingredients/view_models/ingredient_viewmodel.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'routing/router.dart';
@@ -35,23 +37,27 @@ void main() {
     databaseService = DatabaseService(databaseFactory: databaseFactory);
   }
   RecipeRepository recipeRepository = RecipeRepository(database: databaseService);
+  IngredientRepository ingredientRepository =  IngredientRepository(database: databaseService);
   // recipeRepository.seedRecipes(['Egg', 'Rice']);
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => RecipeViewModel(recipeRepository: recipeRepository))
+        ChangeNotifierProvider(create: (context) => RecipeViewModel(recipeRepository: recipeRepository)),
+        ChangeNotifierProvider(create: (context) => IngredientViewModel(ingredientRepository: ingredientRepository))
       ],
       child: MainApp(
-        recipeRepository: RecipeRepository(database: databaseService)
+        recipeRepository: RecipeRepository(database: databaseService),
+        ingredientRepository: IngredientRepository(database: databaseService),
       )
     )
   );
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({super.key, required this.recipeRepository});
+  const MainApp({super.key, required this.recipeRepository, required this.ingredientRepository});
   final RecipeRepository recipeRepository;
+  final IngredientRepository ingredientRepository;
 
   // This widget is the root of your application.
   @override

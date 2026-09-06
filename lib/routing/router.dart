@@ -5,6 +5,7 @@ import '../ui/home/widgets/home_screen.dart';
 import '../ui/recipes/widgets/recipes_screen.dart';
 import '../ui/core/layout/layout_scaffold.dart';
 import '../ui/recipes/widgets/recipe_page.dart';
+import '../ui/ingredients/widgets/ingredients_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/recipes',
@@ -26,7 +27,7 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/ingredients',
-              builder: (BuildContext context, GoRouterState state) => RecipesScreen(),
+              builder: (BuildContext context, GoRouterState state) => IngredientsScreen(),
               // routes: [
               //   GoRoute(
               //     path:':recipeId',

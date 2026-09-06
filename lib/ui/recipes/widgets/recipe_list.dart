@@ -17,8 +17,8 @@ class RecipesList extends StatelessWidget {
             builder: (context, recipeViewModel, child) {
               return ListView(
                 children: [
-                  // for (final Recipe recipe in recipeViewModel.recipes)
-                  for (final Recipe recipe in allSampleRecipes)
+                  for (final Recipe recipe in recipeViewModel.recipes)
+                  // for (final Recipe recipe in allSampleRecipes)
                     RecipeCard(recipe: recipe)]
               );
             }

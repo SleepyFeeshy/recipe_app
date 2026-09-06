@@ -139,6 +139,27 @@ class DatabaseService {
   }
   // #enddocregion Create Ingredient
 
+  // #docregion GetAll Ingredients
+  Future<Result<List<IngredientEntity>>> getAllIngredients() async {
+    try {
+      final entries = await _database!.query(
+        _ingredientTableName, columns: [_ingredientIdColumnName, _ingredientColumnName],
+      );
+      final list = entries
+        .map(
+          (element) => IngredientEntity(
+            id: element[_ingredientIdColumnName] as String,
+            name: element[_ingredientColumnName] as String,
+          ),
+        )
+        .toList();
+      return Result.ok(list);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion GetAll Ingredients
+
   // #docregion Fetch Ingredients with Recipe ID
   Future<Result<List<IngredientEntity>>> fetchIngredientsWithRecipeId(String recipeId) async {
     try {
