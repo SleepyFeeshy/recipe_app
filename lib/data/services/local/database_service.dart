@@ -140,6 +140,58 @@ class DatabaseService {
   // #enddocregion Create Ingredient
 
   // #docregion Fetch Ingredients with Recipe ID
-  
+  Future<Result<List<IngredientEntity>>> fetchIngredientsWithRecipeId(String recipeId) async {
+    try {
+      final entries = await _database!.rawQuery(
+        '''
+          SELECT d._id, d._ingredient 
+          FROM $_recipeIngredientTableName as t
+          INNER JOIN $_ingredientTableName as d
+          on t._ingredient_id = d._id
+          WHERE t._recipe_id = $recipeId
+        '''
+      );
+      final list = entries.map((element) {
+        return IngredientEntity(
+          id: element[_ingredientIdColumnName] as String,
+          name: element[_ingredientColumnName] as String,
+        );
+      }).toList();
+      return Result.ok(list);
+    }
+    on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Fetch Ingredients with Recipe ID
+
+  // #docregion Fetch Ingredients with Recipe ID
+  Future<Result<List<FullRecipeIngredientEntity>>> fetchFullRecipeData() async {
+    try {
+      final entries = await _database!.rawQuery(
+        '''
+          SELECT ri.$_recipeIngredientIdColumnName, r.$_recipeColumnName, i.$_ingredientColumnName, r.$_recipeIdColumnName, i.$_ingredientIdColumnName
+          FROM $_recipeIngredientTableName as ri
+          JOIN $_ingredientTableName as i
+          ON ri._ingredient_id = i._id
+          JOIN $_recipeTableName as r
+          ON ri._recipe_id = r._id
+        '''
+      );
+      final list = entries.map((element) {
+        return FullRecipeIngredientEntity(
+          id: element[_recipeIngredientIdColumnName] as String,
+          recipeId: element[_recipeIdColumnName] as String,
+          recipeName: element[_recipeColumnName] as String,
+          ingredientId: element[_ingredientIdColumnName] as String,
+          ingredientName: element[_ingredientColumnName] as String,
+        );
+      }).toList();
+      return Result.ok(list);
+    }
+    on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
   // #enddocregion Fetch Ingredients with Recipe ID
 }
