@@ -6,9 +6,11 @@ import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:recipe_app/data/model/ingredient.dart';
 import 'package:recipe_app/data/model/recipe.dart';
+import 'package:recipe_app/data/model/recipe_ingredient.dart';
 import 'package:recipe_app/data/repositories/recipe_ingredient_repository.dart';
 import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
 import 'package:recipe_app/domain/models/recipe/recipe.dart';
+import 'package:recipe_app/domain/models/recipe_ingredient/recipe_ingredient.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -30,7 +32,7 @@ void main() async {
   // // Delete the database file completely
   // await deleteDatabase(path);
   
-  setUp(() async {
+  setUpAll(() async {
     // Fresh in-memory DB for every single test
     // Chrome has no SQLite functionality, can't access local files
     if (kIsWeb) {
@@ -49,13 +51,11 @@ void main() async {
     recipeIngredientRepository = RecipeIngredientRepository(database: databaseService);
   });
 
-  
+  tearDownAll(() async {
+      await databaseService.delete();
+  });
   
   group('Ingredient insert', () {
-    tearDownAll(() async {
-      await databaseService.delete();
-    });
-
     late String fishId;
 
     test('New ingredient is correctly inserted, returns object', () async {
@@ -82,12 +82,37 @@ void main() async {
     setUpAll(() async {
       await ingredientRepository.createIngredient("Fish");
       await ingredientRepository.createIngredient("Lettuce");
+
     });
 
-    test('New recipe is created', () async {
-      // create ingredients
-      await ingredientRepository.createIngredient("Fish");
-      await ingredientRepository.createIngredient("Lettuce");
+    test('Create recipe', () async {
+      final Recipe testRecipe = Recipe(id: '', name: 'Steak and eggs', 
+        ingredients: [
+          Ingredient(id: '', name: 'Steak'),
+          Ingredient(id: '', name: 'Egg')
+        ]
+      );
+
+      // Create recipe
+      var recipeResult = await databaseService.insertRecipe("Steak and eggs");
+      expect(recipeResult, isA<Ok<RecipeEntity>>());
+      var recipe = (recipeResult as Ok<RecipeEntity>).value;
+
+      // Create ingredients
+      for (Ingredient ingredient in testRecipe.ingredients) {
+        var ingredientResult = await databaseService.insertIngredient(ingredient.name);
+        expect(ingredientResult, isA<Ok<IngredientEntity>>());
+        var resultIngredientEntity = (ingredientResult as Ok<IngredientEntity>).value;
+        var newRecipeIngredient = await databaseService.insertRecipeIngredient(resultIngredientEntity.id, recipe.id);
+        expect(newRecipeIngredient, isA<Ok<RecipeIngredientEntity>>());
+      }
+    });
+
+    test('Fetch newly created recipe', () async {
+      final Result<List<Recipe>> fetchedRecipes = await recipeRepository.fetchRecipes();
+      final List<Recipe> recipes = (fetchedRecipes as Ok<List<Recipe>>).value;
+      expect(recipes[0].name, "Steak and eggs");
+      expect(recipes[0].ingredients.length, 2);
     });
   });
 }
