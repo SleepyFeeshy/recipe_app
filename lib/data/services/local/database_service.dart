@@ -32,8 +32,9 @@ class DatabaseService {
   static const String _unit = '_ingredient_id';
   // #endregion Ingredients Table
 
-  DatabaseService({required this.databaseFactory});
-
+  DatabaseService({required this.databaseFactory, this.isTest = false});
+  bool isTest;
+  
   final DatabaseFactory databaseFactory;
 
   Database? _database;
@@ -42,27 +43,30 @@ class DatabaseService {
 
   // #docregion Open Database
   Future<void> open() async {
+    String databasePath = isTest ? 'recipe_journal-test.db' : 'recipe_journal.db';
     _database = await databaseFactory.openDatabase(
-      join(await databaseFactory.getDatabasesPath(), 'recipe_journal.db'),
+      join(await databaseFactory.getDatabasesPath(), databasePath),
       options: OpenDatabaseOptions(
         onCreate: (db, version) async {
           var batch = db.batch();
           batch.execute('''CREATE TABLE $_recipeTableName(
               $_recipeIdColumnName TEXT PRIMARY KEY, 
-              $_recipeColumnName TEXT
+              $_recipeColumnName TEXT NOT NULL
             )''');
 
           batch.execute('''CREATE TABLE $_ingredientTableName(
             $_ingredientIdColumnName TEXT PRIMARY KEY,
-            $_ingredientColumnName TEXT
+            $_ingredientColumnName TEXT NOT NULL,
+            UNIQUE($_ingredientColumnName)
           )''');
 
           batch.execute('''CREATE TABLE $_recipeIngredientTableName(
             $_recipeIngredientIdColumnName TEXT PRIMARY KEY,
-            $_recipeFkIdColumnName TEXT,
-            $_ingredientFkIdColumnName TEXT,
+            $_recipeFkIdColumnName TEXT NOT NULL,
+            $_ingredientFkIdColumnName TEXT NOT NULL,
             FOREIGN KEY($_recipeFkIdColumnName) REFERENCES $_recipeTableName($_recipeIdColumnName),
-            FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName)
+            FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName),
+            UNIQUE ($_recipeFkIdColumnName, $_ingredientFkIdColumnName)
           )''');
           await batch.commit();          
         },
@@ -71,6 +75,15 @@ class DatabaseService {
     );
   }
   // #enddocregion Open Database
+
+  // #docregion delete Database
+  Future<void> delete() async {
+    String databaseFile = isTest ? 'recipe_journal-test.db' : 'recipe_journal.db';
+    String databasePath = await databaseFactory.getDatabasesPath();
+    print('deleting DB');
+    await databaseFactory.deleteDatabase(join(databasePath, 'recipe_journal-test.db'));
+  }
+  // #enddocregion delete Database
 
   // #docregion Insert Recipe
   Future<Result<RecipeEntity>> insertRecipe(String recipe) async {
@@ -113,10 +126,32 @@ class DatabaseService {
     try {
       final String id =  uuid.v4();
       await _database!.insert(_ingredientTableName, {
-        _ingredientIdColumnName: id,
-        _ingredientColumnName: ingredient
-      });
+          _ingredientIdColumnName: id,
+          _ingredientColumnName: ingredient
+        },
+        conflictAlgorithm: ConflictAlgorithm.fail
+      );
       return Result.ok(IngredientEntity(id: id, name: ingredient));
+    } on DatabaseException catch (e) {
+      if (e.isUniqueConstraintError()) {
+        final fetchedIngredients = await _database!.query(_ingredientTableName,
+          columns: [_ingredientColumnName, _ingredientIdColumnName],
+          where: "LOWER($_ingredientColumnName) = ?",
+          whereArgs: [ingredient.toLowerCase()],
+          limit: 1
+        );
+        final list = fetchedIngredients
+        .map(
+          (element) => IngredientEntity(
+            id: element[_ingredientIdColumnName] as String,
+            name: element[_ingredientColumnName] as String,
+          ),
+        )
+        .toList();
+        return Result.ok(list[0]);
+        // return Result.error(e);
+      }
+      return Result.error(e);
     } on Exception catch (e) {
       return Result.error(e);
     }
