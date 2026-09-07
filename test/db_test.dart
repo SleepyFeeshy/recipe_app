@@ -7,6 +7,8 @@ import 'package:path/path.dart';
 import 'package:recipe_app/data/model/ingredient.dart';
 import 'package:recipe_app/data/model/recipe.dart';
 import 'package:recipe_app/data/repositories/recipe_ingredient_repository.dart';
+import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
+import 'package:recipe_app/domain/models/recipe/recipe.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -30,9 +32,9 @@ void main() async {
     // Initialize FFI SQLite
     // sqfliteFfiInit();
     sqfliteFfiInit();
-    databaseService = DatabaseService(databaseFactory: databaseFactoryFfi);
+    databaseService = DatabaseService(databaseFactory: databaseFactoryFfi, isTest: true);
   } else {
-    databaseService = DatabaseService(databaseFactory: databaseFactory);
+    databaseService = DatabaseService(databaseFactory: databaseFactory, isTest: true);
   }
 
   // String path = await getDatabasesPath() + 'recipe_journal.db';
@@ -43,38 +45,38 @@ void main() async {
   IngredientRepository ingredientRepository = IngredientRepository(database: databaseService);
   RecipeIngredientRepository recipeIngredientRepository = RecipeIngredientRepository(database: databaseService);
   
-  void seedDatabase() async {
+  Future<void> seedDatabase() async {
     // Seed ingredients
-  final [eggId, riceId, steakId] = await Future.wait(["Egg", "Rice", "Steak"].map((ingredientString) async{
-    var ingredient = await ingredientRepository.createIngredient(ingredientString);
-    switch (ingredient) {
-      case Ok<IngredientEntity>():
-        return ingredient.value.id;
-      case Error():
-        print("Error");
-    }
-  }).toList());
+    final [eggId, riceId, steakId] = await Future.wait(["Egg", "Rice", "Steak"].map((ingredientString) async{
+      var ingredient = await ingredientRepository.createIngredient(ingredientString);
+      switch (ingredient) {
+        case Ok<IngredientEntity>():
+          return ingredient.value.id;
+        case Error():
+          print("Error");
+      }
+    }).toList());
 
-  // Seed recipes
-  final [eggAndRiceId, steakAndRiceId] = await Future.wait(["Egg and rice", "Steak and rice"].map((recipeString) async{
-    var recipe = await recipeRepository.createRecipe(recipeString);
-    switch (recipe) {
-      case Ok<RecipeEntity>():
-        return recipe.value.id;
-      case Error():
-        print("Error");
-    }
-  }).toList());
+    // Seed recipes
+    final [eggAndRiceId, steakAndRiceId] = await Future.wait(["Egg and rice", "Steak and rice"].map((recipeString) async{
+      var recipe = await recipeRepository.createRecipe(recipeString);
+      switch (recipe) {
+        case Ok<RecipeEntity>():
+          return recipe.value.id;
+        case Error():
+          print("Error");
+      }
+    }).toList());
 
-  // Seed recipe ingredients
-  await recipeIngredientRepository.createRecipeIngredient(eggAndRiceId!, eggId!);
-  await recipeIngredientRepository.createRecipeIngredient(eggAndRiceId!, riceId!);
-  await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, riceId!);
-  await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, steakId!);
+    // Seed recipe ingredients
+    await recipeIngredientRepository.createRecipeIngredient(eggAndRiceId!, eggId!);
+    await recipeIngredientRepository.createRecipeIngredient(eggAndRiceId!, riceId!);
+    await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, riceId!);
+    await recipeIngredientRepository.createRecipeIngredient(steakAndRiceId!, steakId!);
   }
 
-  
-
+  await recipeRepository.createRecipeFromObject(Recipe(id:"", name: "Test", ingredients: [Ingredient(id: "", name: "Steak")]));
+  // await seedDatabase();
   final recipes = await recipeRepository.fetchRecipes();
   print(await databaseFactoryFfi.getDatabasesPath()); // Get database path
 }
