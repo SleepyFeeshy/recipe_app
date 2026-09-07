@@ -114,6 +114,22 @@ void main() async {
       expect(recipes[0].name, "Steak and eggs");
       expect(recipes[0].ingredients.length, 2);
     });
+
+    test('Create recipe from object', () async {
+      final Recipe testRecipe = Recipe(id: '', name: 'Steak and Fish', 
+        ingredients: [
+          Ingredient(id: '', name: 'Steak'),
+          Ingredient(id: '', name: 'Fish')
+        ]
+      );
+
+      final createFromObject = await recipeRepository.createRecipeFromObject(testRecipe);
+      // print((createFromObject as Error<void>).error);
+      expect(createFromObject, isA<Ok>());
+      final Result<List<Recipe>> fetchedRecipes = await recipeRepository.fetchRecipes();
+      final List<Recipe> recipes = (fetchedRecipes as Ok<List<Recipe>>).value;
+      expect(recipes[1].name, "Steak and Fish");
+    });
   });
 }
 
