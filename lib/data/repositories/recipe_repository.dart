@@ -80,11 +80,42 @@ class RecipeRepository {
       }
   }
 
+    // Future<Result<RecipeEntity>> createRecipe(String recipe) async {
+    //     if (!_database.isOpen()) {
+    //         await _database.open();
+    //     }
+    //     return _database.insertRecipe(recipe);
+    // }
+
     Future<Result<RecipeEntity>> createRecipe(String recipe) async {
+      if (!_database.isOpen()) {
+          await _database.open();
+      }
+      return _database.insertRecipe(recipe);
+    }
+
+    Future<Result<void>> createRecipeFromObject(Recipe recipe) async {
         if (!_database.isOpen()) {
             await _database.open();
         }
-        return _database.insertRecipe(recipe);
+
+        // Insert or find ingredients
+        for (Ingredient ingredient in recipe.ingredients) {
+          var newIngredient = await _database.insertIngredient(ingredient.name);
+        }
+        // Add recipe to database
+        // Create recipe ingredients from recipe
+        
+        final newRecipe = await _database.insertRecipe(recipe.name);
+        switch (newRecipe) {
+          case Ok<RecipeEntity>():
+            for (var ingredient in recipe.ingredients) {
+              await _database.insertRecipeIngredient(ingredient.id, newRecipe.value.id);
+            }
+            return Result.ok(newRecipe);
+          case Error():
+            return Result.error(newRecipe.error);
+        }
     }
 
     Future<void> seedRecipes(List recipes) async {
