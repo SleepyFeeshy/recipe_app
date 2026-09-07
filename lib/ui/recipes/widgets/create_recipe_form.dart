@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/repositories/recipe_repository.dart';
 import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
+import 'package:recipe_app/ui/ingredients/view_models/ingredient_viewmodel.dart';
 import 'package:recipe_app/ui/recipes/view_models/recipe_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 import '../../../domain/models/recipe/recipe.dart';
 class CreateRecipeForm extends StatefulWidget{
-  CreateRecipeForm({super.key, required this.recipeViewModel});
+  CreateRecipeForm({super.key, required this.recipeViewModel, required this.ingredientViewModel});
 
    final RecipeViewModel recipeViewModel;
+   final IngredientViewModel ingredientViewModel;
 
   @override
   State<CreateRecipeForm> createState() => _CreateRecipeFormState();
@@ -47,11 +49,14 @@ class _CreateRecipeFormState extends State<CreateRecipeForm> {
           Padding(
             padding: const .symmetric(vertical: 16.0),
             child:  ElevatedButton(
-              onPressed: () => widget.recipeViewModel.add.execute(Recipe(
-                  id: "",
-                  name: recipeTitleController.text,
-                  ingredients: inputIngredients
-                ))
+              onPressed: () async {
+                  await widget.recipeViewModel.add.execute(Recipe(
+                    id: "",
+                    name: recipeTitleController.text,
+                    ingredients: inputIngredients
+                  ));
+                  await widget.ingredientViewModel.load.execute();
+                }
               , 
               child: const Text("Create Recipe"))
             

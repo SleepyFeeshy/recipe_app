@@ -58,34 +58,11 @@ class RecipeViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> _add(Recipe recipe) async {
-  //   try {
-  //     final result = await _recipeRepository.createRecipe(recipe.name);
-  //     switch (result) {
-  //       case Ok<RecipeEntity>():
-  //         for (Ingredient ingredient in recipe.ingredients) {
-  //           final newRecipeIngredient = await _recipeIngredientRepository.createRecipeIngredient(result.value.id, ingredient.id);
-  //           switch (newRecipeIngredient) {
-  //             case Ok<RecipeIngredient>():
-  //               return Result.ok(null);
-  //             case Error():
-  //               return Result.error(newRecipeIngredient.error);
-  //           }
-  //         }
-  //         return Result.ok(null);
-  //       case Error():
-  //         print(result.error);
-  //         return Result.error(result.error);
-  //     }
-  //   } on Exception catch(e) {
-  //     return Result.error(e);
-  //   } finally {
-  //     notifyListeners();
-  //   }
-  // }
     try {
       final result = await _recipeRepository.createRecipeFromObject(recipe);
       switch (result) {
         case Ok<void>():
+          await load.execute();
           return Result.ok(null);
         case Error():
           return Result.error(result.error);
