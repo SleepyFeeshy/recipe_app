@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:recipe_app/data/repositories/ingredient_repository.dart';
+import 'package:recipe_app/data/repositories/recipe_ingredient_repository.dart';
+import 'package:recipe_app/domain/models/recipe_ingredient/recipe_ingredient.dart';
 import 'package:recipe_app/ui/ingredients/view_models/ingredient_viewmodel.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -38,12 +40,13 @@ void main() {
   }
   RecipeRepository recipeRepository = RecipeRepository(database: databaseService);
   IngredientRepository ingredientRepository =  IngredientRepository(database: databaseService);
+  RecipeIngredientRepository recipeIngredientRepository = RecipeIngredientRepository(database: databaseService);
   // recipeRepository.seedRecipes(['Egg', 'Rice']);
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => RecipeViewModel(recipeRepository: recipeRepository)),
+        ChangeNotifierProvider(create: (context) => RecipeViewModel(recipeRepository: recipeRepository, recipeIngredientRepository: recipeIngredientRepository)),
         ChangeNotifierProvider(create: (context) => IngredientViewModel(ingredientRepository: ingredientRepository))
       ],
       child: MainApp(
