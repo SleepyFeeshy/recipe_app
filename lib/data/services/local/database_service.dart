@@ -64,8 +64,8 @@ class DatabaseService {
             $_recipeIngredientIdColumnName TEXT PRIMARY KEY,
             $_recipeFkIdColumnName TEXT NOT NULL,
             $_ingredientFkIdColumnName TEXT NOT NULL,
-            FOREIGN KEY($_recipeFkIdColumnName) REFERENCES $_recipeTableName($_recipeIdColumnName),
-            FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName),
+            FOREIGN KEY($_recipeFkIdColumnName) REFERENCES $_recipeTableName($_recipeIdColumnName) ON DELETE CASCADE,
+            FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName) ON DELETE CASCADE,
             UNIQUE ($_recipeFkIdColumnName, $_ingredientFkIdColumnName)
           )''');
           await batch.commit();          
