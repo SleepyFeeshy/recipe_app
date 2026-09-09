@@ -32,6 +32,20 @@ class DatabaseService {
   static const String _unit = '_ingredient_id';
   // #endregion Ingredients Table
 
+  // #docregion Shopping Lists Table
+  static const String _shoppingListTableName = 'shopping_lists';
+  static const String _shoppingListIdColumnName = '_id';
+  static const String _shoppingListColumnName ="_shopping_list";
+  static const String _shoppingListCreatedAtColumnName ='_created_at';
+  // #endregion Shopping Lists Table
+
+  // #docregion Shopping Items Table
+  static const String _shoppingItemTableName = 'shopping_items';
+  static const String _shoppingItemIdColumnName = '_id';
+  static  const String _shoppingItemShoppingListIdColumnName =  "_shopping_list_id";
+  static const String _shoppingItemIngredientIdColumnName ='_ingredient_id';
+  // #endregion Shopping Lists Items Table
+
   DatabaseService({required this.databaseFactory, this.isTest = false});
   bool isTest;
   
@@ -67,6 +81,21 @@ class DatabaseService {
             FOREIGN KEY($_recipeFkIdColumnName) REFERENCES $_recipeTableName($_recipeIdColumnName) ON DELETE CASCADE,
             FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName) ON DELETE CASCADE,
             UNIQUE ($_recipeFkIdColumnName, $_ingredientFkIdColumnName)
+          )''');
+
+          batch.execute('''CREATE TABLE $_shoppingListTableName(
+            $_shoppingItemIdColumnName TEXT PRIMARY KEY,
+            $_shoppingListColumnName TEXT NOT NULL,
+            $_shoppingListCreatedAtColumnName TEXT NOT NULL
+          )''');
+
+          batch.execute('''CREATE TABLE $_shoppingItemTableName(
+            $_shoppingItemIdColumnName TEXT PRIMARY KEY,
+            $_shoppingItemShoppingListIdColumnName TEXT NOT NULL,
+            $_ingredientFkIdColumnName TEXT NOT NULL,
+            FOREIGN KEY($_shoppingItemShoppingListIdColumnName) REFERENCES $_shoppingListTableName($_shoppingListIdColumnName) ON DELETE CASCADE,
+            FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName) ON DELETE CASCADE,
+            UNIQUE ($_shoppingItemShoppingListIdColumnName, $_ingredientFkIdColumnName)
           )''');
           await batch.commit();          
         },
