@@ -98,6 +98,14 @@ class RecipeRepository {
     return _database.insertRecipe(recipe);
   }
 
+  Future<Result<void>> deleteRecipe(String recipeId) async {
+    if (!_database.isOpen()) {
+      await _database.open();
+    }
+    return _database.deleteRecipe(recipeId);
+  }
+
+
   Future<Result<void>> createRecipeFromObject(Recipe recipe) async {
     if (!_database.isOpen()) {
       await _database.open();

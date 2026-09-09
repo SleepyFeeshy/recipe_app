@@ -121,6 +121,19 @@ class DatabaseService {
   }
   // #enddocregion GetAll Recipes
 
+  // #docregion Delete Recipe
+  Future<Result<void>> deleteRecipe(String recipeId) async {
+    try {
+      final deletedRecipe = await _database!.delete(
+        _recipeTableName, where: "$_recipeIdColumnName = ?", whereArgs: [recipeId],
+      );
+      return Result.ok(null);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Delete Recipe
+
   // #docregion Create Ingredient
   Future<Result<IngredientEntity>> insertIngredient(String ingredient) async {
     try {
@@ -157,6 +170,19 @@ class DatabaseService {
     }
   }
   // #enddocregion Create Ingredient
+
+  // #docregion Delete Ingredient
+  Future<Result<void>> deleteIngredient(String ingredientId) async {
+    try {
+      final deletedIngredient = await _database!.delete(
+        _ingredientTableName, where: "$_ingredientIdColumnName = ?", whereArgs: [ingredientId],
+      );
+      return Result.ok(null);
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Delete Ingredient
 
   // #docregion Create RecipeIngredient
   Future<Result<RecipeIngredientEntity>> insertRecipeIngredient(String ingredientId, String recipeId) async {

@@ -23,6 +23,15 @@ class IngredientRepository {
   // #enddocregion Ingredient CRUD
 
   // #docregion Ingredient CRUD
+  Future<Result<void>> deleteIngredient(String ingredientId) async {
+    if (!_database.isOpen()) {
+        await _database.open();
+    }
+    return _database.deleteIngredient(ingredientId);
+  }
+  // #enddocregion Ingredient CRUD
+
+  // #docregion Ingredient CRUD
   Future<Result<List<Ingredient>>> fetchIngredients() async {
     final Result<List<IngredientEntity>> result;
     if (!_database.isOpen()) {

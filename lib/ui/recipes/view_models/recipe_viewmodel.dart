@@ -27,6 +27,7 @@ class RecipeViewModel extends ChangeNotifier {
   RecipeViewModel({required this._recipeRepository, required this._recipeIngredientRepository}) {
     load = Command0<void>(_load)..execute();
     add = Command1<void, Recipe>(_add);
+    delete = Command1<void, Recipe>(_delete);
   }
   final RecipeRepository _recipeRepository;
   final RecipeIngredientRepository _recipeIngredientRepository;
@@ -36,6 +37,7 @@ class RecipeViewModel extends ChangeNotifier {
 
   // Add Recipe item
   late Command1<void, Recipe> add;
+  late Command1<void, Recipe> delete;
 
   List<Recipe> _recipes = [];
   List<Recipe> get recipes => _recipes;
@@ -60,6 +62,23 @@ class RecipeViewModel extends ChangeNotifier {
   Future<Result<void>> _add(Recipe recipe) async {
     try {
       final result = await _recipeRepository.createRecipeFromObject(recipe);
+      switch (result) {
+        case Ok<void>():
+          await load.execute();
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      } 
+    } on Exception catch(e) {
+      return Result.error(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> _delete(Recipe recipe) async {
+    try {
+      final result = await _recipeRepository.deleteRecipe(recipe.id);
       switch (result) {
         case Ok<void>():
           await load.execute();

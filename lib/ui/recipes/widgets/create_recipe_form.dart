@@ -50,6 +50,7 @@ class _CreateRecipeFormState extends State<CreateRecipeForm> {
             padding: const .symmetric(vertical: 16.0),
             child:  ElevatedButton(
               onPressed: () async {
+                  Navigator.of(context).pop();
                   await widget.recipeViewModel.add.execute(Recipe(
                     id: "",
                     name: recipeTitleController.text,
