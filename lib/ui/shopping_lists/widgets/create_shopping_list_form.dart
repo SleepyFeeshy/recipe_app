@@ -43,6 +43,14 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
   }
 
   @override
+  void dispose() {
+    inputIngredientController.dispose();
+    shoppingListTitleController.dispose();
+    recipeSearchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
       child: Column(
@@ -95,8 +103,8 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
               // for (String ingredient in ["Egg", "Steak",])
               //   ListTile(
               //     title: Text(ingredient)),
-              for (Ingredient ingredient in inputIngredients)
-                ListTile(title: Text(ingredient.name)),
+              for (Recipe recipe in inputRecipes)
+                ListTile(title: Text(recipe.name)),
               SearchAnchor.bar(
                 searchController: recipeSearchController,
                 // builder: (BuildContext context, SearchController recipeSearchController) {
@@ -110,7 +118,13 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
                 suggestionsBuilder: (BuildContext context, SearchController recipeSearchController) {
                   return [for (Recipe recipe in widget.recipeViewModel.recipes)
                     ListTile(
-                      title: Text(recipe.name)
+                      title: Text(recipe.name),
+                      onTap: (){
+                        setState(() {
+                          inputIngredients.addAll(recipe.ingredients);
+                          recipeSearchController.closeView(recipe.name);
+                        });
+                      }
                     )];
                 }),
               Padding(
