@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:recipe_app/data/model/ingredient.dart';
 import 'package:recipe_app/data/model/recipe.dart';
 import 'package:recipe_app/data/model/recipe_ingredient.dart';
+import 'package:recipe_app/data/model/shopping_list.dart';
 import 'package:recipe_app/domain/models/recipe_ingredient/recipe_ingredient.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -301,6 +302,28 @@ class DatabaseService {
       return Result.ok(list);
     }
     on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Fetch Ingredients with Recipe ID
+
+  // #docregion Fetch Shopping Lists
+  Future<Result<List<ShoppingListEntity>>> fetchShoppingLists() async {
+    try {
+      final entries = await _database!.query(
+        _shoppingListTableName, columns: [_shoppingItemIdColumnName, _shoppingListColumnName, _shoppingListCreatedAtColumnName],
+      );
+      final list = entries
+        .map(
+          (element) => ShoppingListEntity(
+            id: element[_shoppingItemIdColumnName] as String,
+            name: element[_shoppingListColumnName] as String,
+            createdAt: element[_shoppingListCreatedAtColumnName] as String
+          ),
+        )
+        .toList();
+      return Result.ok(list);
+    } on Exception catch (e) {
       return Result.error(e);
     }
   }
