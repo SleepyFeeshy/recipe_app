@@ -12,6 +12,7 @@ import 'package:recipe_app/data/repositories/shopping_list_repository.dart';
 import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
 import 'package:recipe_app/domain/models/recipe/recipe.dart';
 import 'package:recipe_app/domain/models/recipe_ingredient/recipe_ingredient.dart';
+import 'package:recipe_app/domain/models/shopping_list/shopping_list.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -136,8 +137,14 @@ void main() async {
   });
   
   group('Shopping List insert', () {
-    test('Create shopping list', () async {
+    test('Create shopping list via databaseService', () async {
       final result = await databaseService.insertShoppingList("Test");
+      expect(result, isA<Ok>());
+    });
+
+    test('Create shopping list via shoppingListRepository', () async {
+      ShoppingList shoppingList = ShoppingList(id: "", name: "Test", createdAt: "");
+      final result = await shoppingListRepository.createShoppingList(shoppingList);
       expect(result, isA<Ok>());
     });
   });
