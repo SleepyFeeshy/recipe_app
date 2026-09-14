@@ -8,6 +8,7 @@ import 'package:recipe_app/data/model/ingredient.dart';
 import 'package:recipe_app/data/model/recipe.dart';
 import 'package:recipe_app/data/model/recipe_ingredient.dart';
 import 'package:recipe_app/data/repositories/recipe_ingredient_repository.dart';
+import 'package:recipe_app/data/repositories/shopping_list_repository.dart';
 import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
 import 'package:recipe_app/domain/models/recipe/recipe.dart';
 import 'package:recipe_app/domain/models/recipe_ingredient/recipe_ingredient.dart';
@@ -28,6 +29,7 @@ void main() async {
   late RecipeRepository recipeRepository;
   late IngredientRepository ingredientRepository;
   late RecipeIngredientRepository recipeIngredientRepository;
+  late ShoppingListRepository shoppingListRepository;
   // String path = await getDatabasesPath() + 'recipe_journal.db';
   // // Delete the database file completely
   // await deleteDatabase(path);
@@ -49,6 +51,7 @@ void main() async {
     recipeRepository = RecipeRepository(database: databaseService);
     ingredientRepository = IngredientRepository(database: databaseService);
     recipeIngredientRepository = RecipeIngredientRepository(database: databaseService);
+    shoppingListRepository = ShoppingListRepository(database: databaseService);
   });
 
   tearDownAll(() async {
@@ -129,6 +132,13 @@ void main() async {
       final Result<List<Recipe>> fetchedRecipes = await recipeRepository.fetchRecipes();
       final List<Recipe> recipes = (fetchedRecipes as Ok<List<Recipe>>).value;
       expect(recipes[1].name, "Steak and Fish");
+    });
+  });
+  
+  group('Shopping List insert', () {
+    test('Create shopping list', () async {
+      final result = await databaseService.insertShoppingList("Test");
+      expect(result, isA<Ok>());
     });
   });
 }
