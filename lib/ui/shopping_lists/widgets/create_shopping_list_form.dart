@@ -4,6 +4,7 @@ import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
 import 'package:recipe_app/domain/models/recipe/recipe.dart';
 import 'package:recipe_app/domain/models/shopping_list/shopping_list.dart';
 import 'package:recipe_app/ui/ingredients/view_models/ingredient_viewmodel.dart';
+import 'package:recipe_app/ui/ingredients/widgets/ingredients_list.dart';
 import 'package:recipe_app/ui/recipes/view_models/recipe_viewmodel.dart';
 import 'package:recipe_app/ui/shopping_lists/view_models/shopping_list_viewmodel.dart';
 
@@ -53,6 +54,7 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
     inputIngredientController.dispose();
     shoppingListTitleController.dispose();
     recipeSearchController.dispose();
+    ingredientSearchController.dispose();
     super.dispose();
   }
 
