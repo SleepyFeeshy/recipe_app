@@ -43,4 +43,19 @@ class ShoppingListRepository {
         return Result.error(result.error);
     }
   }
+
+  Future<Result<void>> deleteShoppingList(ShoppingList shoppingList) async {
+    if (!_database.isOpen()) {
+      await _database.open();
+    }
+
+    final result = await _database.deleteShoppingList(shoppingList.id);
+    switch (result) {
+      case Ok<void>():
+        // shoppingListEntity = result.value;
+        return Result.ok(null);
+      case Error():
+        return Result.error(result.error);
+    }
+  }
 }

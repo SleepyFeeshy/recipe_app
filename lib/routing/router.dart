@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'package:recipe_app/ui/shopping_lists/widgets/shopping_list_page.dart';
+import 'package:recipe_app/ui/shopping_lists/widgets/shopping_lists_page.dart';
 
 import '../ui/home/widgets/home_screen.dart';
 import '../ui/recipes/widgets/recipes_screen.dart';
@@ -42,7 +42,7 @@ final GoRouter router = GoRouter(
           routes: [
             GoRoute(
               path: '/shopping',
-              builder: (BuildContext context, GoRouterState state) => ShoppingListPage(),
+              builder: (BuildContext context, GoRouterState state) => ShoppingListsPage(),
             )
           ]
         )

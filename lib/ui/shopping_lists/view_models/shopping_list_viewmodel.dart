@@ -9,10 +9,12 @@ class ShoppingListViewModel extends ChangeNotifier{
     ShoppingListViewModel({required this._shoppingListRepository}) {
         load = Command0<void>(_load)..execute();
         add = Command1<void, ShoppingList>(_add);
+        delete = Command1<void, ShoppingList>(_delete);
     }
 
     late Command0<void> load;
     late Command1<void, ShoppingList> add;
+    late Command1<void, ShoppingList> delete;
 
     final ShoppingListRepository _shoppingListRepository;
 
@@ -41,6 +43,23 @@ class ShoppingListViewModel extends ChangeNotifier{
       final result = await _shoppingListRepository.createShoppingList(shoppingList);
       switch (result) {
         case Ok<ShoppingList>():
+          await load.execute();
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch(e) {
+      return Result.error(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+   Future<Result<void>> _delete(ShoppingList shoppingList) async {
+    try {
+      final result = await _shoppingListRepository.deleteShoppingList(shoppingList);
+      switch (result) {
+        case Ok<void>():
           await load.execute();
           return Result.ok(null);
         case Error():

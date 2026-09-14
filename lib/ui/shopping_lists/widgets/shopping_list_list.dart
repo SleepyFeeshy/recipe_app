@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:recipe_app/ui/recipes/view_models/recipe_viewmodel.dart';
 import 'package:recipe_app/ui/shopping_lists/view_models/shopping_list_viewmodel.dart';
 import 'package:recipe_app/domain/models/shopping_list/shopping_list.dart';
+import 'package:recipe_app/ui/shopping_lists/widgets/shopping_list_tile.dart';
 
 class ShoppingListList extends StatelessWidget{
   ShoppingListList({super.key});
@@ -14,9 +15,7 @@ class ShoppingListList extends StatelessWidget{
       return ListView(
         children: [
           for (ShoppingList shoppingList in shoppingListViewModel.shoppingLists) 
-            ListTile(
-              title: Text(shoppingList.name),
-            )
+            ShoppingListTile(shoppingList: shoppingList)
         ]
       );
 

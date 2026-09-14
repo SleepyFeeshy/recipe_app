@@ -10,7 +10,7 @@ class CreateShoppingListPage extends StatelessWidget{
   CreateShoppingListPage({super.key});
 
   @override
-  Widget build(BuildContext conetxt) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Create Shopping List"),

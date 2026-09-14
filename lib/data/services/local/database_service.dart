@@ -345,6 +345,19 @@ class DatabaseService {
   }
   // #enddocregion Create Shopping List
 
+  // #docregion Delete Shopping List
+  Future<Result<void>> deleteShoppingList(String shoppingListId) async {
+    try {
+      await _database!.delete(_shoppingListTableName, 
+      where: "$_shoppingItemIdColumnName = ?",
+      whereArgs: [shoppingListId]
+      );
+      return Result.ok(null);
+    } on Exception catch(e) {
+      return Result.error(e);
+    }
+  }
+
   // Future<Result<List<ShoppingListEntity>>> insertShoppingListItem(String shoppingListItem) async {
   //   try {
   //     await _database!.insert(

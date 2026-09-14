@@ -7,6 +7,7 @@ import 'package:path/path.dart';
 import 'package:recipe_app/data/model/ingredient.dart';
 import 'package:recipe_app/data/model/recipe.dart';
 import 'package:recipe_app/data/model/recipe_ingredient.dart';
+import 'package:recipe_app/data/model/shopping_list.dart';
 import 'package:recipe_app/data/repositories/recipe_ingredient_repository.dart';
 import 'package:recipe_app/data/repositories/shopping_list_repository.dart';
 import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
@@ -140,6 +141,9 @@ void main() async {
     test('Create shopping list via databaseService', () async {
       final result = await databaseService.insertShoppingList("Test");
       expect(result, isA<Ok>());
+
+      final delete = await databaseService.deleteShoppingList((result as Ok<ShoppingListEntity>).value.id);
+      expect(delete, isA<Ok>());
     });
 
     test('Create shopping list via shoppingListRepository', () async {
