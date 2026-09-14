@@ -327,5 +327,30 @@ class DatabaseService {
       return Result.error(e);
     }
   }
-  // #enddocregion Fetch Ingredients with Recipe ID
+  // #enddocregion Fetch Shopping Lists
+
+  // #docregion Create Shopping List
+  Future<Result<ShoppingListEntity>> insertShoppingList(String title) async {
+    final String id =  uuid.v4();
+    try {
+      await _database!.insert(_shoppingListTableName, {
+        _shoppingListColumnName: title,
+        _shoppingListIdColumnName: id,
+        _shoppingListCreatedAtColumnName: ""
+      });
+      return Result.ok(ShoppingListEntity(createdAt: "", id: id, name: title));
+    } on Exception catch(e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Create Shopping List
+
+  // Future<Result<List<ShoppingListEntity>>> insertShoppingListItem(String shoppingListItem) async {
+  //   try {
+  //     await _database!.insert(
+  //       _shoppingListTableName, {
+  //         _shoppingItemIngredientIdColumnName
+  //       })
+  //   }
+  // }
 }

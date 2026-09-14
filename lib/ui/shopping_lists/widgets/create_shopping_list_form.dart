@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
 import 'package:recipe_app/domain/models/recipe/recipe.dart';
+import 'package:recipe_app/ui/ingredients/view_models/ingredient_viewmodel.dart';
 import 'package:recipe_app/ui/recipes/view_models/recipe_viewmodel.dart';
+import 'package:recipe_app/ui/shopping_lists/view_models/shopping_list_viewmodel.dart';
 
 class CreateShoppingListForm extends StatefulWidget{
-  CreateShoppingListForm({super.key, required this.recipeViewModel});
+  CreateShoppingListForm({super.key, required this.recipeViewModel, required this.ingredientViewModel, required this.shoppingListViewModel});
 
   final RecipeViewModel recipeViewModel;
-  
+  final IngredientViewModel ingredientViewModel;
+  final ShoppingListViewModel shoppingListViewModel;
+
   @override
   State<CreateShoppingListForm> createState() => _CreateShoppingListFormState();
 }
@@ -21,6 +25,7 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
   late TextEditingController shoppingListTitleController;
 
   final SearchController recipeSearchController = SearchController();
+  final SearchController ingredientSearchController = SearchController();
 
   void _addIngredient(String inputIngredient) {
     setState(() {
@@ -63,7 +68,10 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
             padding: const .symmetric(vertical: 16.0),
             child:  ElevatedButton(
               onPressed: () async {
-                  Navigator.of(context).pop();
+                  print(shoppingListTitleController.text);
+                  await widget.shoppingListViewModel.add.execute(shoppingListTitleController.text);
+                  print(inputIngredients.map((ingredient) {return ingredient.name;}));
+                  // Navigator.of(context).pop();
                   // await widget.recipeViewModel.add.execute(Recipe(
                   //   id: "",
                   //   name: recipeTitleController.text,
@@ -82,10 +90,31 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
               //     title: Text(ingredient)),
               for (Ingredient ingredient in inputIngredients)
                 ListTile(title: Text(ingredient.name)),
-              TextField(
-                controller: inputIngredientController,
-                decoration: const InputDecoration(hintText: "Enter ingredient"),
-              ),
+              SearchAnchor.bar(
+                searchController: ingredientSearchController,
+                // builder: (BuildContext context, SearchController recipeSearchController) {
+                //   return IconButton(
+                //     icon: const Icon(Icons.search),
+                //     onPressed: () {
+                //       recipeSearchController.openView();
+                //     },
+                //   );
+                // }, 
+                suggestionsBuilder: (BuildContext context, SearchController ingredientSearchController) {
+                  return [for (Ingredient ingredient in widget.ingredientViewModel.ingredients)
+                    ListTile(
+                      title: Text(ingredient.name),
+                      onTap: (){
+                        setState(() {
+                          // inputIngredients.addAll(recipe.ingredients);
+                          _addIngredient(ingredient.name);
+                          // ingredientSearchController.clear();
+                          // ingredientSearchController.closeView(ingredient.name);
+                          ingredientSearchController.closeView('');
+                        });
+                      }
+                    )];
+                }),
               Padding(
                 padding: const .symmetric(vertical: 16.0),
                 child: ElevatedButton(

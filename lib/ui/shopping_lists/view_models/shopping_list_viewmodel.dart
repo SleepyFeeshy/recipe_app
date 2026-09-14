@@ -8,9 +8,11 @@ import 'package:recipe_app/utils/result.dart';
 class ShoppingListViewModel extends ChangeNotifier{
     ShoppingListViewModel({required this._shoppingListRepository}) {
         load = Command0<void>(_load)..execute();
+        add = Command1<void, String>(_add);
     }
 
     late Command0<void> load;
+    late Command1<void, String> add;
 
     final ShoppingListRepository _shoppingListRepository;
 
@@ -28,6 +30,23 @@ class ShoppingListViewModel extends ChangeNotifier{
           return Result.error(result.error);
       }
     } on Exception catch (e) {
+      return Result.error(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<Result<void>> _add(String shoppingList) async {
+    try {
+      final result = await _shoppingListRepository.createShoppingList(shoppingList);
+      switch (result) {
+        case Ok<ShoppingList>():
+          await load.execute();
+          return Result.ok(null);
+        case Error():
+          return Result.error(result.error);
+      }
+    } on Exception catch(e) {
       return Result.error(e);
     } finally {
       notifyListeners();

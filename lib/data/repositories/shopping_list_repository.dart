@@ -26,4 +26,21 @@ class ShoppingListRepository {
         return Result.error(result.error);
     }
   }
+
+  Future<Result<ShoppingList>> createShoppingList(String name) async {
+    if (!_database.isOpen()) {
+      await _database.open();
+    }
+
+    ShoppingListEntity shoppingListEntity;
+
+    final result = await _database.insertShoppingList(name);
+    switch (result) {
+      case Ok<ShoppingListEntity>():
+        shoppingListEntity = result.value;
+        return Result.ok(ShoppingList(createdAt: shoppingListEntity.createdAt, name: shoppingListEntity.name, id: shoppingListEntity.id));
+      case Error():
+        return Result.error(result.error);
+    }
+  }
 }
