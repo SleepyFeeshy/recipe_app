@@ -27,14 +27,14 @@ class ShoppingListRepository {
     }
   }
 
-  Future<Result<ShoppingList>> createShoppingList(String name) async {
+  Future<Result<ShoppingList>> createShoppingList(ShoppingList shoppingList) async {
     if (!_database.isOpen()) {
       await _database.open();
     }
 
     ShoppingListEntity shoppingListEntity;
 
-    final result = await _database.insertShoppingList(name);
+    final result = await _database.insertShoppingList(shoppingList.name);
     switch (result) {
       case Ok<ShoppingListEntity>():
         shoppingListEntity = result.value;
