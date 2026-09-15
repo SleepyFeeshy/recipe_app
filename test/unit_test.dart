@@ -151,6 +151,20 @@ void main() async {
       final result = await shoppingListRepository.createShoppingList(shoppingList);
       expect(result, isA<Ok>());
     });
+
+    test('Create shopping list item via databaseService', () async {
+      var ingredientResult = await databaseService.insertIngredient("Potato");
+      var ingredientName = (ingredientResult as Ok<IngredientEntity>).value.name;
+      var ingredientId = (ingredientResult as Ok<IngredientEntity>).value.id;
+      expect(ingredientName, "Potato");
+
+      var shoppingListResult = await databaseService.insertShoppingList("Shopping List");
+      expect(shoppingListResult, isA<Ok>());
+      var shoppingListid = (shoppingListResult as Ok<ShoppingListEntity>).value.id;      
+
+      var shoppingItemResult = await databaseService.insertShoppingListItem(shoppingListid, ingredientId);
+      expect(shoppingItemResult, isA<Ok>());
+    });
   });
 }
 

@@ -357,6 +357,22 @@ class DatabaseService {
       return Result.error(e);
     }
   }
+  // #enddocregion Delete Shopping List
+
+  // #docregion Create Shopping List Item
+  Future<Result<void>> insertShoppingListItem(String shoppingListId, String ingredientId) async {
+    try {
+      await _database!.insert(_shoppingItemTableName, {
+          _shoppingItemIdColumnName: shoppingListId,
+          _shoppingItemShoppingListIdColumnName: shoppingListId,
+          _ingredientFkIdColumnName: ingredientId,
+        }
+      );
+      return Result.ok(null);
+    } on Exception catch(e) {
+      return Result.error(e);
+    }
+  }
 
   // Future<Result<List<ShoppingListEntity>>> insertShoppingListItem(String shoppingListItem) async {
   //   try {
