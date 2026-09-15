@@ -41,9 +41,6 @@ class ShoppingListRepository {
         var shoppingListEntities = result.value;
         // Fetch shopping list items
         var shoppingLists = shoppingListEntities.map((shoppingListEntity) {
-          print(shoppingListEntity.id);
-          print(shoppingListEntity.name);
-          print(shoppingListEntity.ingredientId);
           return ShoppingList(id: shoppingListEntity.id, name: shoppingListEntity.name, createdAt: shoppingListEntity.createdAt, shoppingListItems: []);
         }).toList().toSet();
         var shoppingListData = shoppingLists.map((shoppingList) {
