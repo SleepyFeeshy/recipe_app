@@ -376,31 +376,31 @@ class DatabaseService {
   }
   // #enddocregion Create Shopping List Item
 
-  // Future<Result<List<FullShoppingListEntity>>> fetchShoppingLists() async {
-  //   try {
-  //     final entries = await _database!.rawQuery(
-  //       '''
-  //         SELECT sl.$_shoppingListIdColumnName, sl.$_shoppingListColumnName, sl.$_shoppingListCreatedAtColumnName ,$_ingredientIdColumnName, .$_ingredientColumnName
-  //         FROM $_shoppingListTableName as sl
-  //         JOIN $_shoppingItemTableName as si
-  //         ON sl.$_shoppingListIdColumnName = si.$_shoppingItemShoppingListIdColumnName
-  //         JOIN $_ingredientTableName as i
-  //         ON i.$_ingredientIdColumnName = si.$_shoppingItemIngredientIdColumnName
-  //       '''
-  //     );
-  //     final list = entries.map((element) {
-  //       return FullShoppingListEntity(
-  //         id: element[_shoppingListIdColumnName] as String, 
-  //         name: element[_shoppingListColumnName] as String, 
-  //         createdAt: element[_shoppingListCreatedAtColumnName] as String,
-  //         ingredientId: element[_ingredientIdColumnName] as String,
-  //         ingredientName: element[_ingredientColumnName] as String);
-  //     }).toList();
-  //     return Result.ok(list);
-  //   } on Exception catch(e){
-  //     return Result.error(e);
-  //   }
-  // }
+  Future<Result<List<FullShoppingListEntity>>> fetchFullShoppingListData() async {
+    try {
+      final entries = await _database!.rawQuery(
+        '''
+          SELECT sl.$_shoppingListIdColumnName, sl.$_shoppingListColumnName, sl.$_shoppingListCreatedAtColumnName , i.$_ingredientIdColumnName as ingredientId, i.$_ingredientColumnName
+          FROM $_shoppingListTableName as sl
+          JOIN $_shoppingItemTableName as si
+          ON sl.$_shoppingListIdColumnName = si.$_shoppingItemShoppingListIdColumnName
+          JOIN $_ingredientTableName as i
+          ON i.$_ingredientIdColumnName = si.$_shoppingItemIngredientIdColumnName
+        '''
+      );
+      final list = entries.map((element) {
+        return FullShoppingListEntity(
+          id: element[_shoppingListIdColumnName] as String, 
+          name: element[_shoppingListColumnName] as String, 
+          createdAt: element[_shoppingListCreatedAtColumnName] as String,
+          ingredientId: element["ingredientId"] as String,
+          ingredientName: element[_ingredientColumnName] as String);
+      }).toList();
+      return Result.ok(list);
+    } on Exception catch(e){
+      return Result.error(e);
+    }
+  }
   // Future<Result<List<ShoppingListEntity>>> insertShoppingListItem(String shoppingListItem) async {
   //   try {
   //     await _database!.insert(

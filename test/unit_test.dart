@@ -165,6 +165,30 @@ void main() async {
 
       var shoppingItemResult = await databaseService.insertShoppingListItem(shoppingListid, ingredientId);
       expect(shoppingItemResult, isA<Ok>());
+
+      var fullShoppingListDataResult = await databaseService.fetchFullShoppingListData();
+      expect(fullShoppingListDataResult, isA<Ok>());
+
+      var fullShoppingList = await shoppingListRepository.fetchFullShoppingListData();
+      expect(fullShoppingList, isA<Ok>());
+    });
+
+    test('Delete shopping list item via databaseService', () async {
+      var ingredientResult = await databaseService.insertIngredient("Potato");
+      var ingredientName = (ingredientResult as Ok<IngredientEntity>).value.name;
+      var ingredientId = (ingredientResult as Ok<IngredientEntity>).value.id;
+      var ingredients = [(ingredientResult as Ok<IngredientEntity>).value];
+      expect(ingredientName, "Potato");
+
+      var shoppingListResult = await databaseService.insertShoppingList("Shopping List");
+      expect(shoppingListResult, isA<Ok>());
+      var shoppingListid = (shoppingListResult as Ok<ShoppingListEntity>).value.id;      
+
+      var shoppingItemResult = await databaseService.insertShoppingListItem(shoppingListid, ingredientId);
+      expect(shoppingItemResult, isA<Ok>());
+
+      var deleteShoppingListCall = await databaseService.deleteShoppingList(shoppingListid);
+      expect(deleteShoppingListCall, isA<Ok>());
     });
   });
 }

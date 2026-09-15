@@ -23,7 +23,8 @@ class ShoppingListViewModel extends ChangeNotifier{
 
     Future<Result<void>> _load() async {
     try {
-      final result = await _shoppingListRepository.fetchShoppingLists();
+      // final result = await _shoppingListRepository.fetchShoppingLists();
+      final result = await _shoppingListRepository.fetchFullShoppingListData();
       switch (result) {
         case Ok<List<ShoppingList>>():
           _shoppingLists = result.value;
