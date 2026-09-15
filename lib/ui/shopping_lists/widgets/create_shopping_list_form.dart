@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:recipe_app/domain/models/ingredient/ingredient.dart';
 import 'package:recipe_app/domain/models/recipe/recipe.dart';
 import 'package:recipe_app/domain/models/shopping_list/shopping_list.dart';
+import 'package:recipe_app/domain/models/shopping_list/shopping_list_item.dart';
 import 'package:recipe_app/ui/ingredients/view_models/ingredient_viewmodel.dart';
 import 'package:recipe_app/ui/ingredients/widgets/ingredients_list.dart';
 import 'package:recipe_app/ui/recipes/view_models/recipe_viewmodel.dart';
@@ -23,15 +24,22 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<Ingredient> inputIngredients = [];
   List<Recipe> inputRecipes = [];
+  List<ShoppingListItem> inputShoppingListItems = [];
   late TextEditingController inputIngredientController;
   late TextEditingController shoppingListTitleController;
 
   final SearchController recipeSearchController = SearchController();
   final SearchController ingredientSearchController = SearchController();
 
-  void _addIngredient(String inputIngredient) {
+  void _addIngredient(Ingredient ingredient) {
     setState(() {
-      inputIngredients.add(Ingredient(id: "", name: inputIngredient));
+      inputIngredients.add(Ingredient(id: ingredient.id, name: ingredient.name));
+    });
+  }
+
+  void _addShoppingListItem(Ingredient ingredient) {
+    setState(() {
+      inputShoppingListItems.add(ShoppingListItem(id: "", name: "", createdAt: "", ingredient: Ingredient(id: ingredient.id, name: ingredient.name)));
     });
   }
 
@@ -72,7 +80,8 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
             child:  ElevatedButton(
               onPressed: () async {
                   // print(shoppingListTitleController.text);
-                  final shoppingList = ShoppingList(createdAt: "", id: "", name: shoppingListTitleController.text);
+                  final shoppingList = ShoppingList(createdAt: "", id: "", name: shoppingListTitleController.text, 
+                  shoppingListItems: inputShoppingListItems);
                   await widget.shoppingListViewModel.add.execute(shoppingList);
                   // print(inputIngredients.map((ingredient) {return ingredient.name;}));
                   // Navigator.of(context).pop();
@@ -92,8 +101,8 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
               // for (String ingredient in ["Egg", "Steak",])
               //   ListTile(
               //     title: Text(ingredient)),
-              for (Ingredient ingredient in inputIngredients)
-                ListTile(title: Text(ingredient.name)),
+              for (ShoppingListItem shoppingListItem in inputShoppingListItems)
+                ListTile(title: Text(shoppingListItem.ingredient.name)),
               SearchAnchor.bar(
                 searchController: ingredientSearchController,
                 // builder: (BuildContext context, SearchController recipeSearchController) {
@@ -111,7 +120,8 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
                       onTap: (){
                         setState(() {
                           // inputIngredients.addAll(recipe.ingredients);
-                          _addIngredient(ingredient.name);
+                          // _addIngredient(ingredient);
+                          _addShoppingListItem(ingredient);
                           // ingredientSearchController.clear();
                           // ingredientSearchController.closeView(ingredient.name);
                           ingredientSearchController.closeView('');
@@ -123,7 +133,7 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
                 padding: const .symmetric(vertical: 16.0),
                 child: ElevatedButton(
                   onPressed: (){
-                      _addIngredient(inputIngredientController.text);
+                      _addIngredient(Ingredient(name: inputIngredientController.text, id: ""));
                       inputIngredientController.clear();
                     }, 
                   child: const Text("Add ingredient"))

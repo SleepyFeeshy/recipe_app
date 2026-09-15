@@ -147,7 +147,7 @@ void main() async {
     });
 
     test('Create shopping list via shoppingListRepository', () async {
-      ShoppingList shoppingList = ShoppingList(id: "", name: "Test", createdAt: "");
+      ShoppingList shoppingList = ShoppingList(id: "", name: "Test", createdAt: "", shoppingListItems: []);
       final result = await shoppingListRepository.createShoppingList(shoppingList);
       expect(result, isA<Ok>());
     });

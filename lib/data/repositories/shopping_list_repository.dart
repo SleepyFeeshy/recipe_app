@@ -19,7 +19,7 @@ class ShoppingListRepository {
       case Ok<List<ShoppingListEntity>>():
         var shoppingListEntities = result.value;
         var shoppingLists = shoppingListEntities.map((shoppingListEntity) {
-          return ShoppingList(id: shoppingListEntity.id, name: shoppingListEntity.name, createdAt: shoppingListEntity.createdAt);
+          return ShoppingList(id: shoppingListEntity.id, name: shoppingListEntity.name, createdAt: shoppingListEntity.createdAt, shoppingListItems: []);
         }).toList();
         return Result.ok(shoppingLists);
       case Error():
@@ -38,7 +38,9 @@ class ShoppingListRepository {
     switch (result) {
       case Ok<ShoppingListEntity>():
         shoppingListEntity = result.value;
-        return Result.ok(ShoppingList(createdAt: shoppingListEntity.createdAt, name: shoppingListEntity.name, id: shoppingListEntity.id));
+        // Create shopping list items
+        // for (Shopp)
+        return Result.ok(ShoppingList(createdAt: shoppingListEntity.createdAt, name: shoppingListEntity.name, id: shoppingListEntity.id, shoppingListItems: []));
       case Error():
         return Result.error(result.error);
     }
