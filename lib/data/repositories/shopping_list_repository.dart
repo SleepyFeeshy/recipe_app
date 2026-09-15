@@ -1,5 +1,6 @@
 import 'package:recipe_app/data/model/shopping_list.dart';
 import 'package:recipe_app/domain/models/shopping_list/shopping_list.dart';
+import 'package:recipe_app/domain/models/shopping_list/shopping_list_item.dart';
 import 'package:recipe_app/utils/result.dart';
 
 import '../services/local/database_service.dart';
@@ -39,7 +40,10 @@ class ShoppingListRepository {
       case Ok<ShoppingListEntity>():
         shoppingListEntity = result.value;
         // Create shopping list items
-        // for (Shopp)
+        for (ShoppingListItem shoppingListItem in shoppingList.shoppingListItems) {
+          // Insert shopping list item into database
+          await _database.insertShoppingListItem(shoppingListItem.id, shoppingListItem.ingredient.id);
+        }
         return Result.ok(ShoppingList(createdAt: shoppingListEntity.createdAt, name: shoppingListEntity.name, id: shoppingListEntity.id, shoppingListItems: []));
       case Error():
         return Result.error(result.error);

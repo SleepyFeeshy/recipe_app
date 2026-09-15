@@ -5,3 +5,14 @@ class ShoppingListEntity {
   final String name;
   final String createdAt;
 }
+
+class FullShoppingListEntity {
+  FullShoppingListEntity({required this.id, required this.name, required this.createdAt, required this.ingredientId, required this.ingredientName});
+
+  final String id;  
+  final String name;
+  final String createdAt;
+
+  final String ingredientId;
+  final String ingredientName;
+}

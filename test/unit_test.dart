@@ -156,6 +156,7 @@ void main() async {
       var ingredientResult = await databaseService.insertIngredient("Potato");
       var ingredientName = (ingredientResult as Ok<IngredientEntity>).value.name;
       var ingredientId = (ingredientResult as Ok<IngredientEntity>).value.id;
+      var ingredients = [(ingredientResult as Ok<IngredientEntity>).value];
       expect(ingredientName, "Potato");
 
       var shoppingListResult = await databaseService.insertShoppingList("Shopping List");
