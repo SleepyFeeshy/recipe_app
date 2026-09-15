@@ -361,9 +361,10 @@ class DatabaseService {
 
   // #docregion Create Shopping List Item
   Future<Result<void>> insertShoppingListItem(String shoppingListId, String ingredientId) async {
+    final String id =  uuid.v4();
     try {
       await _database!.insert(_shoppingItemTableName, {
-          _shoppingItemIdColumnName: shoppingListId,
+          _shoppingItemIdColumnName: id,
           _shoppingItemShoppingListIdColumnName: shoppingListId,
           _ingredientFkIdColumnName: ingredientId,
         }
