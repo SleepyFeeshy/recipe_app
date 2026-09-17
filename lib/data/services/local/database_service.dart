@@ -380,7 +380,7 @@ class DatabaseService {
     try {
       final entries = await _database!.rawQuery(
         '''
-          SELECT sl.$_shoppingListIdColumnName, sl.$_shoppingListColumnName, sl.$_shoppingListCreatedAtColumnName , i.$_ingredientIdColumnName as ingredientId, i.$_ingredientColumnName
+          SELECT sl.$_shoppingListIdColumnName as shoppingListId, si.$_shoppingItemIdColumnName as shoppingItemId, sl.$_shoppingListColumnName, sl.$_shoppingListCreatedAtColumnName , i.$_ingredientIdColumnName as ingredientId, i.$_ingredientColumnName
           FROM $_shoppingListTableName as sl
           JOIN $_shoppingItemTableName as si
           ON sl.$_shoppingListIdColumnName = si.$_shoppingItemShoppingListIdColumnName
@@ -390,7 +390,8 @@ class DatabaseService {
       );
       final list = entries.map((element) {
         return FullShoppingListEntity(
-          id: element[_shoppingListIdColumnName] as String, 
+          id: element["shoppingItemId"] as String, 
+          shoppingListId: element["shoppingListId"] as String,
           name: element[_shoppingListColumnName] as String, 
           createdAt: element[_shoppingListCreatedAtColumnName] as String,
           ingredientId: element["ingredientId"] as String,

@@ -25,10 +25,20 @@ class RecipePage extends StatelessWidget {
         ]
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        textDirection: TextDirection.ltr,
         children: [
-          Text("Ingredients"),
-          for (Ingredient ingredient in recipe.ingredients) 
-            Text(ingredient.name)
+          ListView(
+            shrinkWrap: true,
+            children: [
+              Text("Ingredients", textAlign: TextAlign.left,),
+              for (Ingredient ingredient in recipe.ingredients) 
+              ListTile(
+                title: Text(ingredient.name),
+              )
+            ],
+          )
+          
         ],
       )
     );

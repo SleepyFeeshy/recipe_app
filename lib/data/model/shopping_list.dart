@@ -7,9 +7,10 @@ class ShoppingListEntity {
 }
 
 class FullShoppingListEntity {
-  FullShoppingListEntity({required this.id, required this.name, required this.createdAt, required this.ingredientId, required this.ingredientName});
+  FullShoppingListEntity({required this.id, required this.shoppingListId, required this.name, required this.createdAt, required this.ingredientId, required this.ingredientName});
 
   final String id;  
+  final String shoppingListId;
   final String name;
   final String createdAt;
 
