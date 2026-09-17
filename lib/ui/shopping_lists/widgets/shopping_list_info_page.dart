@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_app/domain/models/shopping_list/shopping_list.dart';
+import 'package:recipe_app/domain/models/shopping_list/shopping_list_item.dart';
 import 'package:recipe_app/ui/shopping_lists/view_models/shopping_list_viewmodel.dart';
 
 class ShoppingListInfoPage extends StatelessWidget{
@@ -24,7 +25,20 @@ class ShoppingListInfoPage extends StatelessWidget{
           })
         ],
       ),
-      body: Text(shoppingList.name),
+      body: Column(
+        children: [
+          ListView(
+            shrinkWrap: true,
+            children: [
+              Text(shoppingList.name),
+              for (ShoppingListItem shoppingListItem in shoppingList.shoppingListItems)
+                ListTile(
+                  title: Text(shoppingListItem.name)
+                )
+            ]
+          )
+        ],
+      )
     );
   }
 }

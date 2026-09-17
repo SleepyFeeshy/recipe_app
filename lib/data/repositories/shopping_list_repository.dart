@@ -39,7 +39,7 @@ class ShoppingListRepository {
     switch (result) {
       case Ok<List<FullShoppingListEntity>>():
         var shoppingListEntities = result.value;
-        
+
         // Fetch shopping list items and make intermediary shopping list
         var shoppingLists = shoppingListEntities.map((shoppingListEntity) {
           return (id: shoppingListEntity.shoppingListId, name: shoppingListEntity.name, createdAt: shoppingListEntity.createdAt);
@@ -48,14 +48,15 @@ class ShoppingListRepository {
 
         // From shopping lists set, set up ShoppingList entries
         var shoppingListData = shoppingLists.map((shoppingList) {
-          var shoppingListItems = shoppingListEntities.where((element) => element.id == shoppingList.id).map((shoppingListEntity) {
+          var shoppingListItems = shoppingListEntities.where((element) => element.shoppingListId == shoppingList.id).map((shoppingListEntity) {
             return ShoppingListItem(
-              id: "", 
-              name: "", 
+              id: shoppingListEntity.id, 
+              name: shoppingListEntity.ingredientName, 
               ingredient: Ingredient(id: shoppingListEntity.ingredientId, name: shoppingListEntity.ingredientName), 
               createdAt: "");}).toList();
+            print(shoppingListItems);
           return ShoppingList(id: shoppingList.id, name: shoppingList.name, createdAt: shoppingList.createdAt, shoppingListItems: shoppingListItems);
-        }).toSet().toList();
+        }).toList();
         return Result.ok(shoppingListData);
       case Error():
         return Result.error(result.error);
