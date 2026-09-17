@@ -164,7 +164,10 @@ class _CreateShoppingListFormState extends State<CreateShoppingListForm> {
                       title: Text(recipe.name),
                       onTap: (){
                         setState(() {
-                          inputIngredients.addAll(recipe.ingredients);
+                          // inputIngredients.addAll(recipe.ingredients);
+                          for (Ingredient ingredient in recipe.ingredients) {
+                            _addShoppingListItem(ingredient);
+                          }
                           recipeSearchController.closeView(recipe.name);
                         });
                       }
