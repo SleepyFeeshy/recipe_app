@@ -17,12 +17,13 @@ class RecipesList extends StatefulWidget {
 class _RecipesListState extends State<RecipesList> {
   // SearchController recipeSearchController = SearchController();
   final TextEditingController recipeTextController = TextEditingController();
-  List<Recipe> recipeList = [];
+  // late List<Recipe> recipeList = [];
+  // final List<Recipe> recipeList = context.read<List<Recipe>>();
 
   @override
   void initState() {
-    recipeList = widget.recipeViewModel.recipes;
     super.initState();
+    
     // widget.recipeViewModel.add.addListener(_onAdd);
   }
 
@@ -35,23 +36,22 @@ class _RecipesListState extends State<RecipesList> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Recipe> recipeQuery = context.read<RecipeViewModel>().recipes;
     return CustomScrollView(
       slivers: [
         SliverFillRemaining(
           child: ListView(
-                children: [
-                  TextField(
-                    controller: recipeTextController,
-                    onChanged: (string) {
-                      setState(() {
-                        recipeList = widget.recipeViewModel.recipes.where((recipe) => recipe.name.toLowerCase().contains(recipeTextController.text.toLowerCase())).toList();
-                      });
-                    },
-                  ),
-                  for (final Recipe recipe in recipeList)
-                  // for (final Recipe recipe in allSampleRecipes)
-                    RecipeCard(recipe: recipe)]
-              )
+              children: [
+                TextField(
+                  controller: recipeTextController,
+                  decoration: InputDecoration(hintText: "Search for a recipe"),
+                ),
+                for (final Recipe recipe in widget.recipeViewModel.recipes.where((recipe) {
+                  return recipe.name.toLowerCase().contains(recipeTextController.text.toLowerCase());
+                }))
+                // for (final Recipe recipe in allSampleRecipes)
+                  RecipeCard(recipe: recipe)]
+            )
         )
       ],
     );
