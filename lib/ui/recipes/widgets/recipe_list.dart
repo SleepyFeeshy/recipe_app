@@ -23,7 +23,6 @@ class _RecipesListState extends State<RecipesList> {
   @override
   void initState() {
     super.initState();
-    
     // widget.recipeViewModel.add.addListener(_onAdd);
   }
 
@@ -36,7 +35,6 @@ class _RecipesListState extends State<RecipesList> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Recipe> recipeQuery = context.read<RecipeViewModel>().recipes;
     return CustomScrollView(
       slivers: [
         SliverFillRemaining(
@@ -44,6 +42,7 @@ class _RecipesListState extends State<RecipesList> {
               children: [
                 TextField(
                   controller: recipeTextController,
+                  onChanged: (string){setState(() {});},
                   decoration: InputDecoration(hintText: "Search for a recipe"),
                 ),
                 for (final Recipe recipe in widget.recipeViewModel.recipes.where((recipe) {
