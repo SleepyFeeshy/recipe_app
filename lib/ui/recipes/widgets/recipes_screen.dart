@@ -2,8 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:recipe_app/ui/recipes/widgets/create_recipe_page.dart';
 import '../../recipes/widgets/recipe_list.dart';
 
-class RecipesScreen extends StatelessWidget{
+class RecipesScreen extends StatefulWidget{ 
   const RecipesScreen({super.key});
+
+  @override
+  State<RecipesScreen> createState() => _RecipesScreenState();
+}
+class _RecipesScreenState extends State<RecipesScreen> {
+  final GlobalKey<_RecipesScreenState> _formKey = GlobalKey<_RecipesScreenState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
