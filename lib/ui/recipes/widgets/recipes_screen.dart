@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:recipe_app/ui/recipes/view_models/recipe_viewmodel.dart';
 import 'package:recipe_app/ui/recipes/widgets/create_recipe_page.dart';
 import '../../recipes/widgets/recipe_list.dart';
 
@@ -27,7 +29,11 @@ class _RecipesScreenState extends State<RecipesScreen> {
       appBar: AppBar(
         title: Text("Recipes"),
       ),
-      body: RecipesList(),
+      body: Consumer<RecipeViewModel>(
+        builder: (context, recipeViewModel, child) {
+          return RecipesList(recipeViewModel: recipeViewModel);
+        }
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
             await Navigator.of(context, rootNavigator: true).push(

@@ -7,24 +7,28 @@ import '../../../ui/recipes/widgets/recipe_card.dart';
 import '../../../ui/recipes/widgets/recipe_page.dart';
 
 class RecipesList extends StatefulWidget {
-  const RecipesList({super.key});
+  const RecipesList({super.key, required this.recipeViewModel});
+  final RecipeViewModel recipeViewModel;
   @override
   State<RecipesList> createState() => _RecipesListState();
 
 }
 
 class _RecipesListState extends State<RecipesList> {
-  SearchController recipeSearchController = SearchController();
+  // SearchController recipeSearchController = SearchController();
+  final TextEditingController recipeTextController = TextEditingController();
+  List<Recipe> recipeList = [];
 
   @override
   void initState() {
+    recipeList = widget.recipeViewModel.recipes;
     super.initState();
     // widget.recipeViewModel.add.addListener(_onAdd);
   }
 
   @override
   void dispose() {
-    recipeSearchController.dispose();
+    recipeTextController.dispose();
     super.dispose();
   }
 
@@ -34,39 +38,20 @@ class _RecipesListState extends State<RecipesList> {
     return CustomScrollView(
       slivers: [
         SliverFillRemaining(
-          child: Consumer<RecipeViewModel>(
-            builder: (context, recipeViewModel, child) {
-              return ListView(
+          child: ListView(
                 children: [
-                  SearchAnchor.bar(
-                searchController: recipeSearchController,
-                // builder: (BuildContext context, SearchController recipeSearchController) {
-                //   return IconButton(
-                //     icon: const Icon(Icons.search),
-                //     onPressed: () {
-                //       recipeSearchController.openView();
-                //     },
-                //   );
-                // }, 
-                suggestionsBuilder: (BuildContext context, SearchController recipeSearchController) {
-                  return [for (Recipe recipe in recipeViewModel.recipes)
-                    ListTile(
-                      title: Text(recipe.name),
-                      onTap: () async{
-                        recipeSearchController.closeView('');
-                        await Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute(
-                              builder: (context) => RecipePage(recipe: recipe))
-                          );
-                      }
-                    )];
-                }),
-                  for (final Recipe recipe in recipeViewModel.recipes)
+                  TextField(
+                    controller: recipeTextController,
+                    onChanged: (string) {
+                      setState(() {
+                        recipeList = widget.recipeViewModel.recipes.where((recipe) => recipe.name.toLowerCase().contains(recipeTextController.text.toLowerCase())).toList();
+                      });
+                    },
+                  ),
+                  for (final Recipe recipe in recipeList)
                   // for (final Recipe recipe in allSampleRecipes)
                     RecipeCard(recipe: recipe)]
-              );
-            }
-          )
+              )
         )
       ],
     );
