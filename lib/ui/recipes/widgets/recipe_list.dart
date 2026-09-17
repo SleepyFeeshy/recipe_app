@@ -17,13 +17,21 @@ class RecipesList extends StatefulWidget {
 class _RecipesListState extends State<RecipesList> {
   // SearchController recipeSearchController = SearchController();
   final TextEditingController recipeTextController = TextEditingController();
+  String recipeQuery = '';
   // late List<Recipe> recipeList = [];
   // final List<Recipe> recipeList = context.read<List<Recipe>>();
 
   @override
   void initState() {
     super.initState();
+    recipeTextController.addListener(() => setState((){}));
     // widget.recipeViewModel.add.addListener(_onAdd);
+  }
+
+  void _onSearch() {
+    setState(() {
+      recipeQuery = recipeTextController.text;
+    });
   }
 
   @override
@@ -42,11 +50,19 @@ class _RecipesListState extends State<RecipesList> {
               children: [
                 TextField(
                   controller: recipeTextController,
-                  onChanged: (string){setState(() {});},
-                  decoration: InputDecoration(hintText: "Search for a recipe"),
+                  onChanged: (string){ _onSearch();},
+                  decoration: 
+                  InputDecoration(
+                    hintText: "Search for a recipe",
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        recipeTextController.clear();
+                        _onSearch();
+                      }, 
+                      icon: Icon(Icons.clear))),
                 ),
                 for (final Recipe recipe in widget.recipeViewModel.recipes.where((recipe) {
-                  return recipe.name.toLowerCase().contains(recipeTextController.text.toLowerCase());
+                  return recipe.name.toLowerCase().contains(recipeQuery.toLowerCase());
                 }))
                 // for (final Recipe recipe in allSampleRecipes)
                   RecipeCard(recipe: recipe)]
