@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:recipe_app/data/model/ingredient.dart';
+import 'package:recipe_app/data/model/inventory_item.dart';
 import 'package:recipe_app/data/model/recipe.dart';
 import 'package:recipe_app/data/model/recipe_ingredient.dart';
 import 'package:recipe_app/data/model/shopping_list.dart';
@@ -26,7 +27,6 @@ class DatabaseService {
   // #docregion Recipe Ingredients Table
   static const String _recipeIngredientTableName = 'recipe_ingredients';
   static const String _recipeIngredientIdColumnName = '_id';
-  static const String _recipeIngredientColumnName ='_recipe_ingredient';
   static const String _recipeFkIdColumnName = '_recipe_id';
   static const String _ingredientFkIdColumnName = '_ingredient_id';
   static const String _quantity = '_ingredient_id';
@@ -46,6 +46,13 @@ class DatabaseService {
   static  const String _shoppingItemShoppingListIdColumnName =  "_shopping_list_id";
   static const String _shoppingItemIngredientIdColumnName ='_ingredient_id';
   // #endregion Shopping Lists Items Table
+
+  // #docregion Inventory Items Table
+  static const String _inventoryItemsTableName = 'inventory_items';
+  static const String _inventoryItemsIdColumnName = "_id";
+  static const String _inventoryItemsIngredientIdColumnName = '_ingredient_id';
+  static const String _inventoryItemsCreatedAtColumnName = '_created_at';
+  // #enddocregion Inventory Items Table
 
   DatabaseService({required this.databaseFactory, this.isTest = false});
   bool isTest;
@@ -97,6 +104,13 @@ class DatabaseService {
             FOREIGN KEY($_shoppingItemShoppingListIdColumnName) REFERENCES $_shoppingListTableName($_shoppingListIdColumnName) ON DELETE CASCADE,
             FOREIGN KEY($_ingredientFkIdColumnName) REFERENCES $_ingredientTableName($_ingredientIdColumnName) ON DELETE CASCADE,
             UNIQUE ($_shoppingItemShoppingListIdColumnName, $_ingredientFkIdColumnName)
+          )''');
+          
+          batch.execute('''CREATE TABLE $_inventoryItemsTableName(
+            $_inventoryItemsIdColumnName TEXT PRIMARY KEY,
+            $_inventoryItemsIngredientIdColumnName TEXT NOT NULL,
+            $_inventoryItemsCreatedAtColumnName TEXT NOT NULL,
+            FOREIGN KEY($_inventoryItemsIngredientIdColumnName) REFERENCES $_inventoryItemsTableName($_inventoryItemsIdColumnName) ON DELETE CASCADE
           )''');
           await batch.commit();          
         },
@@ -376,6 +390,7 @@ class DatabaseService {
   }
   // #enddocregion Create Shopping List Item
 
+  // #docregion Fetch full shopping list data
   Future<Result<List<FullShoppingListEntity>>> fetchFullShoppingListData() async {
     try {
       final entries = await _database!.rawQuery(
@@ -402,12 +417,42 @@ class DatabaseService {
       return Result.error(e);
     }
   }
-  // Future<Result<List<ShoppingListEntity>>> insertShoppingListItem(String shoppingListItem) async {
+  // #enddocregion Fetch full shopping list data
+
+  // #docregion Insert new inventory item
+  Future<Result<InventoryItemIdentity>> insertInventoryItem(String ingredientId) async {
+    // Get current date and time in UTC
+    DateTime nowUtc = DateTime.now().toUtc();
+
+    // Convert to RFC-3339 compatible string
+    String rfc3339String = nowUtc.toIso8601String(); 
+
+    final String id =  uuid.v4();
+    try {
+      await _database!.insert(_inventoryItemsTableName, {
+        _inventoryItemsIdColumnName: id,
+        _inventoryItemsIngredientIdColumnName: ingredientId,
+        _inventoryItemsCreatedAtColumnName: rfc3339String
+      });
+      return Result.ok(InventoryItemIdentity(id: id, ingredientId: ingredientId, createdAt: rfc3339String));
+    } on Exception catch(e) {
+      return Result.error(e);
+    }
+  }
+  // #enddocregion Insert new inventory item
+
+  // // #docregion Fetch inventory items
+  // Future<Result<List<InventoryItemIdentity>>> fetchInventoryItems() async {
   //   try {
-  //     await _database!.insert(
-  //       _shoppingListTableName, {
-  //         _shoppingItemIngredientIdColumnName
-  //       })
+  //     final query = await _database!.rawQuery(
+  //       '''
+  //         SELECT inv.$_inventoryItemsIdColumnName as id, ing.$_ingredientIdColumnName as ingredientId, ing.$_ingredientColumnName as ingredientName, inv.$_inventoryItemsCreatedAtColumnName
+  //         FROM $_inventoryItemsTableName as inv
+  //         JOIN  $_ingredientTableName as ing
+  //         ON inv.$_inventoryItemsIngredientIdColumnName = ing.$_ingredientIdColumnName
+  //       '''
+  //     );
+  //     return Result.ok(query);
   //   }
   // }
 }
