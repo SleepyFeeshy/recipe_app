@@ -110,7 +110,7 @@ class DatabaseService {
             $_inventoryItemsIdColumnName TEXT PRIMARY KEY,
             $_inventoryItemsIngredientIdColumnName TEXT NOT NULL,
             $_inventoryItemsCreatedAtColumnName TEXT NOT NULL,
-            FOREIGN KEY($_inventoryItemsIngredientIdColumnName) REFERENCES $_inventoryItemsTableName($_inventoryItemsIdColumnName) ON DELETE CASCADE
+            FOREIGN KEY($_inventoryItemsIngredientIdColumnName) REFERENCES $_ingredientIdColumnName($_ingredientTableName) ON DELETE CASCADE
           )''');
           await batch.commit();          
         },
