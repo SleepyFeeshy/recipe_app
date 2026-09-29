@@ -5,7 +5,7 @@ import '../view_models/recipe_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class RecipePage extends StatelessWidget {
-  RecipePage({super.key, required this.recipe});
+  const RecipePage({super.key, required this.recipe});
 
   final Recipe recipe;
 
@@ -15,13 +15,12 @@ class RecipePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(recipe.name),
         actions: [
-          Consumer<RecipeViewModel>(
-          builder: (context, recipeViewModel, child) { return IconButton(
+          IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () async {
               Navigator.of(context).pop();
-              await recipeViewModel.delete.execute(recipe);
-            },);})
+              await context.read<RecipeViewModel>().delete.execute(recipe);
+            },)
         ]
       ),
       body: Column(
