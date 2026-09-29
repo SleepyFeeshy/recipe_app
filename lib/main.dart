@@ -26,45 +26,40 @@ import 'package:flutter_localizations/flutter_localizations.dart'
 
 
 
-void main() {
-  late DatabaseService databaseService;
-
-  // Chrome has no SQLite functionality, can't access local files
-  if (kIsWeb) {
-    throw UnsupportedError('Platform not supported.');
-  } else if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
-    // Initialize FFI SQLite
-    // sqfliteFfiInit();
-    sqfliteFfiInit();
-    databaseService = DatabaseService(databaseFactory: databaseFactoryFfi);
-  } else {
-    databaseService = DatabaseService(databaseFactory: databaseFactory);
-  }
-  RecipeRepository recipeRepository = RecipeRepository(database: databaseService);
-  IngredientRepository ingredientRepository =  IngredientRepository(database: databaseService);
-  RecipeIngredientRepository recipeIngredientRepository = RecipeIngredientRepository(database: databaseService);
-  ShoppingListRepository shoppingListRepository = ShoppingListRepository(database: databaseService);
-  // recipeRepository.seedRecipes(['Egg', 'Rice']);
-
+void main() {  
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => RecipeViewModel(recipeRepository: recipeRepository, recipeIngredientRepository: recipeIngredientRepository)),
-        ChangeNotifierProvider(create: (context) => IngredientViewModel(ingredientRepository: ingredientRepository)),
-        ChangeNotifierProvider(create: (context) => ShoppingListViewModel(shoppingListRepository: shoppingListRepository))
+        Provider(create: (context) {
+          late DatabaseService databaseService;
+          // Chrome has no SQLite functionality, can't access local files
+          if (kIsWeb) {
+            throw UnsupportedError('Platform not supported.');
+          } else if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+            // Initialize FFI SQLite
+            // sqfliteFfiInit();
+            sqfliteFfiInit();
+            databaseService = DatabaseService(databaseFactory: databaseFactoryFfi);
+          } else {
+            databaseService = DatabaseService(databaseFactory: databaseFactory);
+          }
+          return databaseService;
+        }),
+        Provider(create: (context) => RecipeRepository(database: context.read())),
+        Provider(create: (context) => RecipeIngredientRepository(database: context.read())),
+        Provider(create: (context) => IngredientRepository(database: context.read())),
+        Provider(create: (context) => ShoppingListRepository(database: context.read())),
+        ChangeNotifierProvider(create: (context) => RecipeViewModel(recipeRepository: context.read(), recipeIngredientRepository: context.read())),
+        ChangeNotifierProvider(create: (context) => IngredientViewModel(ingredientRepository: context.read())),
+        ChangeNotifierProvider(create: (context) => ShoppingListViewModel(shoppingListRepository: context.read()))
       ],
-      child: MainApp(
-        recipeRepository: RecipeRepository(database: databaseService),
-        ingredientRepository: IngredientRepository(database: databaseService),
-      )
+      child: MainApp(),
     )
   );
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({super.key, required this.recipeRepository, required this.ingredientRepository});
-  final RecipeRepository recipeRepository;
-  final IngredientRepository ingredientRepository;
+  const MainApp({super.key});
 
   // This widget is the root of your application.
   @override
